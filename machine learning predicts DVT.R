@@ -1,25 +1,7 @@
 
 ###### machine learning predicts DVT ######
 
-#########  Ò»¡¢µ¥ÒòËØºÍLasso,È¡²¢¼¯  ######### 
-
-# shrinkage =0.1
-# n.minobsinnode=20
-# n.trees=150
-# interaction.depth = 1
-
-library(gbm)
-dataset01 <- dataset
-dataset01$DVT = ifelse(dataset01$DVT == "ÓĞÉî¾²ÂöÑªË¨",1,0)
-dataset01$DVT <- as.factor(dataset01$DVT)
-
-gbm = gbm(DVT~Age+ADL+log2LOS+log2CCI+Chemotherapy+
-            Port_cath+HSA+Antibiotic+NSAID+Opium+Bed+
-            Plaster+VTEHistory+log2WBC+log2Hb+Immunotherapy+
-            log2PLT+TumorStage+Drinking+EPO, data = dataset01, distribution = "bernoulli", n.trees = 150,interaction.depth = 1, shrinkage = 0.1, n.minobsinnode = 20, cv.folds = 10)
-
-
-#########  ¶ş¡¢µ¥ÒòËØºÍLasso,È¡½»¼¯  ######### 
+#########  ä¸€ã€å•å› ç´ å’ŒLasso,å–äº¤é›†  ######### 
 
 # DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistory+log2WBC
 # DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+VTEHistory+log2WBC+log2DDimer
@@ -41,7 +23,7 @@ fitControl <- trainControl(method = "repeatedcv",
                            ## the following function
                            summaryFunction = twoClassSummary)
 
-## tune cart ÎŞDD£¬cp=0.001,AUC=0.647£»
+## tune cart æ— DDï¼Œcp=0.001,AUC=0.647ï¼›
 set.seed(7)
 cartgrid <- expand.grid(.cp=seq(0.001, 0.150, by=0.004))
 
@@ -49,14 +31,14 @@ cart_1 <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHist
 print(cart_1)
 plot(cart_1)
 
-## tune cart ÓĞDD£¬cp=0.001,AUC=0.713£»
+## tune cart æœ‰DDï¼Œcp=0.001,AUC=0.713ï¼›
 set.seed(7)
 cartgrid <- expand.grid(.cp=seq(0.001, 0.150, by=0.004))
 cart_2 <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+VTEHistory+log2WBC+log2DDimer, data=dataset, method="rpart", metric="ROC", tuneGrid=cartgrid, trControl=fitControl)
 print(cart_2)
 plot(cart_2)
 
-## tune RF ÎŞDD£¬mtry = 1,AUC=0.716£»
+## tune RF æ— DDï¼Œmtry = 1,AUC=0.716ï¼›
 library(import)
 
 set.seed(7)
@@ -66,7 +48,7 @@ RF_1 <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistor
 print(RF_1)
 plot(RF_1)
 
-## tune RF ÓĞDD£¬mtry = 1,AUC=0.768£»
+## tune RF æœ‰DDï¼Œmtry = 1,AUC=0.768ï¼›
 set.seed(7)
 rfgrid <- expand.grid(.mtry=c(1, 2, 3, 4, 11))
 RF_2 <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+VTEHistory+log2WBC+log2DDimer,
@@ -74,7 +56,7 @@ RF_2 <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+V
 print(RF_2)
 plot(RF_2)
 
-## tune svm ÎŞDD£¬sigma = 0.025,C= 3, AUC=0.670£»
+## tune svm æ— DDï¼Œsigma = 0.025,C= 3, AUC=0.670ï¼›
 set.seed(7)
 svmgrid <- expand.grid(.sigma=c(0.025, 0.05, 0.1, 0.15), .C=seq(1, 10, by=1))
 svm_1 <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistory+log2WBC, 
@@ -82,7 +64,7 @@ svm_1 <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHisto
 print(svm_1)
 plot(svm_1)
 
-## tune svm ÓĞDD£¬sigma = 0.025,C= 2, AUC=0.743£»
+## tune svm æœ‰DDï¼Œsigma = 0.025,C= 2, AUC=0.743ï¼›
 set.seed(7)
 svmgrid <- expand.grid(.sigma=c(0.025, 0.05, 0.1, 0.15), .C=seq(1, 10, by=1))
 svm_2 <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+VTEHistory+log2WBC+log2DDimer,
@@ -90,9 +72,9 @@ svm_2 <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+
 print(svm_2)
 plot(svm_2)
 
-# ¶ÔÁ¬ĞøĞÔ±äÁ¿±ê×¼»¯ºóÔÙ¿´½á¹û
+# å¯¹è¿ç»­æ€§å˜é‡æ ‡å‡†åŒ–åå†çœ‹ç»“æœ
 
-## tune svm ÎŞDD£¬sigma = 0.025,C= 3, AUC=0.670£»
+## tune svm æ— DDï¼Œsigma = 0.025,C= 3, AUC=0.670ï¼›
 set.seed(7)
 svmgrid <- expand.grid(.sigma=c(0.025, 0.05, 0.1, 0.15), .C=seq(1, 10, by=1))
 svm_3 <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistory+log2WBC, 
@@ -100,7 +82,7 @@ svm_3 <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHisto
 print(svm_3)
 plot(svm_3)
 
-## tune svm ÓĞDD£¬sigma = 0.025,C= 2, AUC=0.743£»
+## tune svm æœ‰DDï¼Œsigma = 0.025,C= 2, AUC=0.743ï¼›
 set.seed(7)
 svmgrid <- expand.grid(.sigma=c(0.025, 0.05, 0.1, 0.15), .C=seq(1, 10, by=1))
 svm_4 <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+VTEHistory+log2WBC+log2DDimer,
@@ -108,12 +90,12 @@ svm_4 <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+
 print(svm_4)
 plot(svm_4)
 
-#######  ¸úÊÇ·ñ½«±äÁ¿±ê×¼»¯£¬½á¹ûÎŞ²îÒì
+#######  è·Ÿæ˜¯å¦å°†å˜é‡æ ‡å‡†åŒ–ï¼Œç»“æœæ— å·®å¼‚
 
 dataset$DVT <- dataset01$DVT
-dataset$DVT <- ifelse(dataset$DVT==1,"ÓĞÉî¾²ÂöÑªË¨","ÎŞÉî¾²ÂöÑªË¨")
+dataset$DVT <- ifelse(dataset$DVT==1,"æœ‰æ·±é™è„‰è¡€æ “","æ— æ·±é™è„‰è¡€æ “")
 
-#¼ÓÔØ°ü
+#åŠ è½½åŒ…
 library(MASS) # LDA
 library(rms) # LR
 library(rpart) # CART
@@ -122,11 +104,11 @@ library(randomForest) # RF
 library(pROC) # ROC
 library(caret)
 
-# Êı¾İ¼¯·ÖÊ®ÕÛ
+# æ•°æ®é›†åˆ†åæŠ˜
 set.seed(7)
 folds <- createFolds(y=dataset[,59],k=10)
 
-# ¸ø¶¨²ÎÊı
+# ç»™å®šå‚æ•°
 max1=0; max2=0; max3=0;
 max4=0; max5=0; max6=0;
 num1=0; num2=0; num3=0;
@@ -139,28 +121,28 @@ auc_value5 <-as.numeric()
 auc_value5.new <-as.numeric()
 auc_value6 <-as.numeric()
 
-# ÑµÁ·¼¯½¨Ä£ºÍ²âÊÔ¼¯µ÷ÓÅ
-# LDA ²»ÁªºÏD¶ş¾ÛÌå
+# è®­ç»ƒé›†å»ºæ¨¡å’Œæµ‹è¯•é›†è°ƒä¼˜
+# LDA ä¸è”åˆDäºŒèšä½“
 
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre1 <- lda(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistory+log2WBC, data=fold_train)
   fold_predict1 <- predict(fold_pre1, newdata=fold_test, type="response") 
-  fold_predict1 <- as.data.frame(fold_predict1)$posterior.ÓĞÉî¾²ÂöÑªË¨
+  fold_predict1 <- as.data.frame(fold_predict1)$posterior.æœ‰æ·±é™è„‰è¡€æ “
   auc_value1 <- append(auc_value1,auc(as.numeric(fold_test$DVT),as.numeric(fold_predict1)))
   
 }  
 
-# LR²»ÁªºÏD¶ş¾ÛÌå
+# LRä¸è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre2 <- glm(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistory+log2WBC,
                    data=fold_train, family ="binomial")  
@@ -173,12 +155,12 @@ for(i in 1:10){
 } 
 
 
-# cart²»ÁªºÏD¶ş¾ÛÌå
+# cartä¸è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre3 <- rpart(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistory+log2WBC, data=fold_train, control = rpart.control(cp="0.001"))  
   
@@ -188,7 +170,7 @@ for(i in 1:10){
   
 } 
 
-###### »»Ò»ÖÖ·½Ê½¿ÉÊÓ»¯·ÖÀàÊ÷Ä£ĞÍ   ######
+###### æ¢ä¸€ç§æ–¹å¼å¯è§†åŒ–åˆ†ç±»æ ‘æ¨¡å‹   ######
 
 # install.packages("visNetwork")
 # install.packages("sparkline")
@@ -204,12 +186,12 @@ fold_pre15_1 <- rpart(DVT~Age+LOS+CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistor
 plotcp(fold_pre15_1)
 visTree(fold_pre15_1,main = "classification tree model with D-Dimer",height = "400px")
 
-# RF ²»ÁªºÏD¶ş¾ÛÌå
+# RF ä¸è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   
   fold_pre4 <- randomForest(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistory+log2WBC,
@@ -220,12 +202,12 @@ for(i in 1:10){
   auc_value4 <- append(auc_value4,auc(as.numeric(fold_test$DVT),as.numeric(fold_predict4)))
 } 
 
-# SVM ²»ÁªºÏD¶ş¾ÛÌå
+# SVM ä¸è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   
   fold_pre5 <- ksvm(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistory+log2WBC,
@@ -238,17 +220,17 @@ for(i in 1:10){
 
 
 # Khorana
-# Êı¾İ¼¯·ÖÊ®ÕÛ
+# æ•°æ®é›†åˆ†åæŠ˜
 
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
   auc_value6 <- append(auc_value6,auc(as.numeric(fold_test$DVT),as.numeric(fold_test$K_Score)))
 } 
 
 
-# È·¶¨×îÓÅÄ£ĞÍÊÇµÚ¼¸ÕÛ
+# ç¡®å®šæœ€ä¼˜æ¨¡å‹æ˜¯ç¬¬å‡ æŠ˜
 num1<-which.max(auc_value1)
 num2<-which.max(auc_value2)
 num3<-which.max(auc_value3)
@@ -264,9 +246,9 @@ print(auc_value5)
 print(auc_value5.new)
 print(auc_value6)
 
-# ÑµÁ·¶ÔÓ¦µÄ×îÓÅÕÛ(numi)Ä£ĞÍ&ÔÚ²âÊÔ¼¯ÆÀ¼ÛÄ£ĞÍ
+# è®­ç»ƒå¯¹åº”çš„æœ€ä¼˜æŠ˜(numi)æ¨¡å‹&åœ¨æµ‹è¯•é›†è¯„ä»·æ¨¡å‹
 
-# LDA ²»ÁªºÏD¶ş¾ÛÌå
+# LDA ä¸è”åˆDäºŒèšä½“
 
 fold_test <- dataset[folds[[num1]],]   
 
@@ -276,12 +258,12 @@ fold_pre7 <- lda(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHis
                  data=fold_train) 
 
 fold_predict7 <- predict(fold_pre7, newdata=fold_test, type="response")
-fold_predict7 <- as.data.frame(fold_predict7)$posterior.ÓĞÉî¾²ÂöÑªË¨
+fold_predict7 <- as.data.frame(fold_predict7)$posterior.æœ‰æ·±é™è„‰è¡€æ “
 
 roc7 <- roc(as.numeric(fold_test$DVT),fold_predict7)
 plot(roc7, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_7 <- ifelse(fold_predict7 >= 0.291,2,1)
@@ -291,9 +273,9 @@ table(pred_7, fold_test$DVT)
 plot(fold_pre7, panel = panel.lda, 
      abbrev = FALSE, xlab = "LD1", ylab = "LD2")
 
-write.csv(fold_pre7$scaling ,file = "F:/004/Ö×ÁöÑªË¨Êı¾İ¿â¼°·ÖÎö½á¹û/2100Àı ·ÖÎö½á¹û - 3/LDA»Ø¹éÏµÊıÎŞDD.csv")
+write.csv(fold_pre7$scaling ,file = "F:/004/è‚¿ç˜¤è¡€æ “æ•°æ®åº“åŠåˆ†æç»“æœ/2100ä¾‹ åˆ†æç»“æœ - 3/LDAå›å½’ç³»æ•°æ— DD.csv")
 
-# LR ²»ÁªºÏD¶ş¾ÛÌå
+# LR ä¸è”åˆDäºŒèšä½“
 fold_test <- dataset2[folds[[num2]],]   
 
 fold_train <- dataset2[-folds[[num2]],]
@@ -306,14 +288,14 @@ fold_predict8 <- predict(fold_pre8,type='response', newdata=fold_test)
 roc8 <- roc(as.numeric(fold_test$DVT),fold_predict8)
 plot(roc8, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_7 <- ifelse(fold_predict7 >= 0.288,2,1)
 table(pred_7, fold_test$DVT)
 (50+10)/72   ###  0.833  ###
 
-############ »æÖÆ½»»¥Ê½ÁĞÏßÍ¼   ############
+############ ç»˜åˆ¶äº¤äº’å¼åˆ—çº¿å›¾   ############
 
 dataset2$Hb <- dataset2$Hb_1
 dataset2$PLT <- dataset2$PLT_1
@@ -342,7 +324,7 @@ nomogram_for_DDimer_LR_model <- fold_pre14
 regplot(nomogram_for_DDimer_LR_model,observation=fold_test[1,]) 
 
 
-############ »æÖÆÍøÒ³¼ÆËãÆ÷   ############
+############ ç»˜åˆ¶ç½‘é¡µè®¡ç®—å™¨   ############
 
 library(glmnet)
 library(MASS)
@@ -350,19 +332,19 @@ library(survival)
 
 library(rms)
 library(magrittr)
-library(DynNom) # ¼ÓÔØÊ§°Ü
+library(DynNom) # åŠ è½½å¤±è´¥
 library(packrat)
 library(rsconnect)
 
-install.packages("colorspace", depend=TRUE)   # ²¹³äÕâ¸ö°üÒ²ÎŞĞ§
+install.packages("colorspace", depend=TRUE)   # è¡¥å……è¿™ä¸ªåŒ…ä¹Ÿæ— æ•ˆ
 
-# ÖØÆôRºó³É¹¦¼ÓÔØ
+# é‡å¯RåæˆåŠŸåŠ è½½
 
 DynNom(nomogram_for_DDimer_LR_model, covariate = "numeric", DNtitle = "A Dynamic nomogram of Cancer-associated DVT")
 
 DynNom(nomogram_for_DDimer_LR_model, covariate = "numeric", DNtitle = "A Dynamic nomogram of Cancer-associated DVT with DDimer", DNxlab = "Probability of Cancer-associated DVT")
 
-# ×ö³ö¶¯Ì¬ÁĞÏßÍ¼ÒÔºóÉÏ´«µ½ÍøÒ³
+# åšå‡ºåŠ¨æ€åˆ—çº¿å›¾ä»¥åä¸Šä¼ åˆ°ç½‘é¡µ
 
 DNbuilder(nomogram_for_DDimer_LR_model, covariate = "numeric", DNtitle = "A Dynamic nomogram of Cancer-associated DVT with DDimer", DNxlab = "Probability of Cancer-associated DVT")
 
@@ -373,7 +355,7 @@ rsconnect::setAccountInfo(name='webcalculatorofcancerassociateddvt',
                           secret='Z+mUU1IhR6/EZUUcpVQsTJKaHh6erGpnyP1ZLZgr')
 rsconnect::deployApp('DynNomapp')
 
-# CART ²»ÁªºÏD¶ş¾ÛÌå
+# CART ä¸è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num3]],]   
 
 fold_train <- dataset[-folds[[num3]],]
@@ -386,17 +368,17 @@ fold_predict9 <- predict(fold_pre9,type='class', newdata=fold_test)
 roc9 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_predict9))
 plot(roc9, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict9, fold_test$DVT)
 (48+6)/72   ###  0.750  ###
 
-# CART ²»ÁªºÏD¶ş¾ÛÌå£¬ÎŞlog2
+# CART ä¸è”åˆDäºŒèšä½“ï¼Œæ— log2
 library(foreign)
-dataset_train <- read.spss("ÑµÁ·¼¯ºÍ²âÊÔ¼¯.sav")
+dataset_train <- read.spss("è®­ç»ƒé›†å’Œæµ‹è¯•é›†.sav")
 dataset_train <- as.data.frame(dataset_train)
-dataset_validation <- read.spss("ÑéÖ¤¼¯.sav")
+dataset_validation <- read.spss("éªŒè¯é›†.sav")
 dataset_validation <- as.data.frame(dataset_validation)
 
 dataset_train$LOS <- round(exp(dataset_train$log2LOS),0)
@@ -425,7 +407,7 @@ fold_predict9 <- predict(fold_pre9,type='class', newdata=fold_test)
 roc9 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_predict9))
 plot(roc9, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 ### AUC 0.616 ###
@@ -436,7 +418,7 @@ table(fold_predict9, fold_test$DVT)
 plot(fold_pre9)
 text(fold_pre9, use.n = F)
 
-# RF ²»ÁªºÏD¶ş¾ÛÌå
+# RF ä¸è”åˆDäºŒèšä½“
 
 fold_test <- dataset[folds[[num4]],]   
 
@@ -450,13 +432,13 @@ fold_predict10 <- predict(fold_pre10,type='response', newdata=fold_test)
 roc10 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_predict10))
 plot(roc10, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict10, fold_test$DVT)
 (51+5)/72   ###  0.778  ###
 
-# RF ²»ÁªºÏD¶ş¾ÛÌå£¬ÎŞlog2
+# RF ä¸è”åˆDäºŒèšä½“ï¼Œæ— log2
 
 fold_test <- dataset_train[folds[[num4]],]   
 
@@ -470,7 +452,7 @@ fold_predict10 <- predict(fold_pre10,type='response', newdata=fold_test)
 roc10 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_predict10))
 plot(roc10, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 # 0.674
 
@@ -479,7 +461,7 @@ table(fold_predict10, fold_test$DVT)
 
 varImpPlot(fold_pre10)
 
-# SVM ²»ÁªºÏD¶ş¾ÛÌå
+# SVM ä¸è”åˆDäºŒèšä½“
 
 fold_test <- dataset[folds[[num5]],]   
 
@@ -493,13 +475,13 @@ fold_predict11 <- predict(fold_pre11,type='response', newdata=fold_test)
 roc11 <- roc(as.numeric(fold_test[,59]),as.numeric(fold_predict11))
 plot(roc11, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict11, fold_test$DVT)
 (53+6)/72   ###  0.819  ###
 
-###### ÓÃÖ÷³É·Ö·½·¨¿ÉÊÓ»¯SVM ######
+###### ç”¨ä¸»æˆåˆ†æ–¹æ³•å¯è§†åŒ–SVM ######
 library(kernlab);library(e1071);library(ggplot2)
 fold_test <- dataset[folds[[num5]],]   
 fold_train <- dataset[-folds[[num5]],]
@@ -521,14 +503,14 @@ seed_score2$DVT <- fold_train$DVT
 
 ggplot(seed_score1,aes(x=Comp.1,y= Comp.2,colour = DVT,shape = DVT))+
   geom_point()+theme(legend.position = "right")+
-  labs(x = "Ö÷³É·ÖµÃ·Ö1", y = "Ö÷³É·ÖµÃ·Ö2", title = "Ö÷³É·Ö½µÎ¬É¢µãÍ¼" )
+  labs(x = "ä¸»æˆåˆ†å¾—åˆ†1", y = "ä¸»æˆåˆ†å¾—åˆ†2", title = "ä¸»æˆåˆ†é™ç»´æ•£ç‚¹å›¾" )
 ggplot(seed_score2,aes(x=Comp.1,y= Comp.2,colour = DVT,shape = DVT))+
   geom_point()+theme(legend.position = "right")+
-  labs(x = "Ö÷³É·ÖµÃ·Ö1", y = "Ö÷³É·ÖµÃ·Ö2", title = "Ö÷³É·Ö½µÎ¬É¢µãÍ¼" )
+  labs(x = "ä¸»æˆåˆ†å¾—åˆ†1", y = "ä¸»æˆåˆ†å¾—åˆ†2", title = "ä¸»æˆåˆ†é™ç»´æ•£ç‚¹å›¾" )
 
 svm_tune <- tune.svm(DVT~Comp.1+Comp.2, data = seed_score1,kernel ="radial",
                      gamma = seq(0.1,1,0.1),cost = seq(0.1,5,0.5))
-## Ê¹ÓÃggplot2°üÈÈÁ¦Í¼¿ÉÊÓ»¯²ÎÊıËÑË÷½á¹û
+## ä½¿ç”¨ggplot2åŒ…çƒ­åŠ›å›¾å¯è§†åŒ–å‚æ•°æœç´¢ç»“æœ
 plotdata1 <- svm_tune$performances
 head(plotdata1)
 
@@ -540,7 +522,7 @@ ggplot(plotdata1,aes(x = cost, y = gamma))+
 
 svm_tune2 <- tune.svm(DVT~Comp.1+Comp.2, data = seed_score2,kernel ="radial",
                       gamma = seq(0.1,1,0.1),cost = seq(0.1,5,0.5))
-## Ê¹ÓÃggplot2°üÈÈÁ¦Í¼¿ÉÊÓ»¯²ÎÊıËÑË÷½á¹û
+## ä½¿ç”¨ggplot2åŒ…çƒ­åŠ›å›¾å¯è§†åŒ–å‚æ•°æœç´¢ç»“æœ
 plotdata2 <- svm_tune2$performances
 head(plotdata2)
 
@@ -551,7 +533,7 @@ ggplot(plotdata2,aes(x = cost, y = gamma))+
   ggtitle("Performance of SVM")
 
 
-set.seed(1) # radialºËSVM·ÖÀàÆ÷
+set.seed(1) # radialæ ¸SVMåˆ†ç±»å™¨
 seedsvm1 <- svm(DVT~Comp.1+Comp.2, data = seed_score1,gamma=0.6, C=1)
 
 win.graph(width=4.875, height=2.5,pointsize=8)
@@ -564,106 +546,106 @@ plot(cmdscale(dist(x)),
 legend(1,1,c("Normal","CIN"), col=c("red","blue"),lty=1,cex=0.5)
 
 
-set.seed(1) # radialºËSVM·ÖÀàÆ÷
+set.seed(1) # radialæ ¸SVMåˆ†ç±»å™¨
 seedsvm2 <- svm(DVT~Comp.1+Comp.2, data = seed_score2,gamma=0.6, C=2)
 plot(seedsvm2, data = seed_score2)
 
-# Khorana ²»ÁªºÏD¶ş¾ÛÌå
+# Khorana ä¸è”åˆDäºŒèšä½“
 
-fold_test <- dataset[folds[[num6]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+fold_test <- dataset[folds[[num6]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
 roc12 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_test$K_Score))
 plot(roc12, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_12 <- ifelse(fold_test$K_Score >= 3,2,1)
 table(pred_12, fold_test$DVT)
 (48+8)/72   ###  0.778  ###
 
-# ÔÚÑéÖ¤¼¯ÆÀ¼ÛÄ£ĞÍ
+# åœ¨éªŒè¯é›†è¯„ä»·æ¨¡å‹
 
-# LDA ²»ÁªºÏD¶ş¾ÛÌå
+# LDA ä¸è”åˆDäºŒèšä½“
 
 fold_predict25 <- predict(fold_pre7, newdata=validation, type="response")
-fold_predict25 <- as.data.frame(fold_predict25)$posterior.ÓĞÉî¾²ÂöÑªË¨
+fold_predict25 <- as.data.frame(fold_predict25)$posterior.æœ‰æ·±é™è„‰è¡€æ “
 
 roc25 <- roc(as.numeric(validation$DVT),fold_predict25)
 plot(roc25, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_25 <- ifelse(fold_predict25 >= 0.241,2,1)
 table(pred_25, validation$DVT)
 (168+49)/310   ###  0.700  ###
 
-# LR ²»ÁªºÏD¶ş¾ÛÌå
+# LR ä¸è”åˆDäºŒèšä½“
 
 fold_predict26 <- predict(fold_pre8,type='response', newdata=validation)  
 
 roc26 <- roc(as.numeric(validation$DVT),fold_predict26)
 plot(roc26, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_26 <- ifelse(fold_predict26 >= 0.257,2,1)
 table(pred_26, validation$DVT)
 (172+48)/310   ###  0.710  ###
 
-# CART ²»ÁªºÏD¶ş¾ÛÌå
+# CART ä¸è”åˆDäºŒèšä½“
 
 fold_predict27 <- predict(fold_pre9,type='class', newdata=validation)  
 
 roc27 <- roc(as.numeric(validation$DVT),as.numeric(fold_predict27))
 plot(roc27, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict27, validation$DVT)
 (211+23)/310   ###  0.755  ###
 
-# RF ²»ÁªºÏD¶ş¾ÛÌå
+# RF ä¸è”åˆDäºŒèšä½“
 
 fold_predict28 <- predict(fold_pre10,type='response', newdata=validation)  
 
 roc28 <- roc(as.numeric(validation$DVT),as.numeric(fold_predict28))
 plot(roc28, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict28, validation$DVT)
 (220+26)/310   ###  0.794  ###
 
-# SVM ²»ÁªºÏD¶ş¾ÛÌå
+# SVM ä¸è”åˆDäºŒèšä½“
 
 fold_predict29 <- predict(fold_pre11,type='response', newdata=validation)  
 
 roc29 <- roc(as.numeric(validation$DVT),as.numeric(fold_predict29))
 plot(roc29, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict29, validation$DVT)
 (219+18)/310   ###  0.765  ###
 
-# Khorana ²»ÁªºÏD¶ş¾ÛÌå
+# Khorana ä¸è”åˆDäºŒèšä½“
 
 roc30 <- roc(as.numeric(validation$DVT),as.numeric(validation$K_Score))
 plot(roc30, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_30 <- ifelse(validation$K_Score >= 3,2,1)
 table(pred_30, validation$DVT)
 (184+27)/310   ###  0.681 ###
 
-############   »æÖÆĞ£×¼ÇúÏß   ############
+############   ç»˜åˆ¶æ ¡å‡†æ›²çº¿   ############
 
 LDA <- fold_predict25
 LR <- fold_predict26
@@ -686,13 +668,13 @@ ggplot(cal_obj)+geom_line()+geom_abline(intercept=100,slope=-1)+
   labs(title = "Fig.2. Calibration Curves without D-Dimer in the Validation set")+theme(plot.title = element_text(hjust = 0.5))
 
 
-# 6.2 ÁªºÏD¶ş¾ÛÌåËã·¨²âÆÀ
+# 6.2 è”åˆDäºŒèšä½“ç®—æ³•æµ‹è¯„
 
 # DVT~Age+ADL+log2LOS+log2CCI+Chemotherapy+Port_cath+HSA+Antibiotic+NSAID+Opium+Bed+Plaster+VTEHistory+log2WBC+log2Hb+log2DDimer+Immunotherapy+log2PLT+TumorStage+Drinking+EPO+TargetedTherapy
 
-# Ê®ÕÛ½»²æÑéÖ¤µÄ·½·¨
+# åæŠ˜äº¤å‰éªŒè¯çš„æ–¹æ³•
 
-#¼ÓÔØ°ü
+#åŠ è½½åŒ…
 library(MASS) # LDA
 library(rms) # LR
 library(rpart) # CART
@@ -701,11 +683,11 @@ library(randomForest) # RF
 library(pROC) # ROC
 library(caret)
 
-# Êı¾İ¼¯·ÖÊ®ÕÛ
+# æ•°æ®é›†åˆ†åæŠ˜
 set.seed(7)
 folds <- createFolds(y=dataset[,59],k=10)
 
-# ¸ø¶¨²ÎÊı
+# ç»™å®šå‚æ•°
 
 num7=0; num8=0; num9=0;
 num10=0; num11=0; num12=0
@@ -724,19 +706,19 @@ auc_value11 <-as.numeric()
 auc_value11.new <-as.numeric()
 auc_value12 <-as.numeric()
 
-# ÑµÁ·¼¯½¨Ä£ºÍ²âÊÔ¼¯µ÷ÓÅ
-# LDA ÁªºÏD¶ş¾ÛÌå
+# è®­ç»ƒé›†å»ºæ¨¡å’Œæµ‹è¯•é›†è°ƒä¼˜
+# LDA è”åˆDäºŒèšä½“
 
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre.1 <- lda(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+VTEHistory+log2WBC+log2DDimer,
                     data=fold_train)
   fold_predict.1 <- predict(fold_pre.1, newdata=fold_test, type="response") 
-  fold_predict.1 <- as.data.frame(fold_predict.1)$posterior.ÓĞÉî¾²ÂöÑªË¨
+  fold_predict.1 <- as.data.frame(fold_predict.1)$posterior.æœ‰æ·±é™è„‰è¡€æ “
   auc_value.1 <- append(auc_value.1,auc(as.numeric(fold_test[,59]),as.numeric(fold_predict.1)))
   
 }  
@@ -744,12 +726,12 @@ for(i in 1:10){
 plot(fold_pre.1 , panel = panel.lda, 
      abbrev = FALSE, xlab = "LD1", ylab = "LD2")
 
-# LRÁªºÏD¶ş¾ÛÌå
+# LRè”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre.2 <- glm(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+VTEHistory+log2WBC+log2DDimer,
                     data=fold_train, family ="binomial")  
@@ -761,12 +743,12 @@ for(i in 1:10){
   
 } 
 
-# cartÁªºÏD¶ş¾ÛÌå
+# cartè”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre.3 <- rpart(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+VTEHistory+log2WBC+log2DDimer,
                       data=fold_train, control = rpart.control(cp="0.001"))  
@@ -777,12 +759,12 @@ for(i in 1:10){
   
 } 
 
-# RF ÁªºÏD¶ş¾ÛÌå
+# RF è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   
   fold_pre.4 <- randomForest(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+VTEHistory+log2WBC+log2DDimer,
@@ -793,13 +775,13 @@ for(i in 1:10){
   auc_value.4 <- append(auc_value.4,auc(as.numeric(fold_test[,59]),as.numeric(fold_predict.4)))
 } 
 
-# SVMÁªºÏD¶ş¾ÛÌå
+# SVMè”åˆDäºŒèšä½“
 
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   
   fold_pre.5 <- ksvm(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+VTEHistory+log2WBC+log2DDimer,
@@ -810,20 +792,20 @@ for(i in 1:10){
   auc_value.5 <- append(auc_value.5,auc(as.numeric(fold_test[,59]),as.numeric(fold_predict.5)))
 }
 
-# KhoranaÁªºÏD¶ş¾ÛÌå
-# Êı¾İ¼¯·ÖÊ®ÕÛ
+# Khoranaè”åˆDäºŒèšä½“
+# æ•°æ®é›†åˆ†åæŠ˜
 
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],] #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],] #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_test$K_Score_DD <- as.numeric(fold_test$K_Score)+as.numeric(fold_test$D¶ş¾ÛÌå)
+  fold_test$K_Score_DD <- as.numeric(fold_test$K_Score)+as.numeric(fold_test$DäºŒèšä½“)
   
   auc_value.6 <- append(auc_value.6,auc(as.numeric(fold_test$DVT),as.numeric(fold_test$K_Score_DD)))
 } 
 
 
-# È·¶¨×îÓÅÄ£ĞÍÊÇµÚ¼¸ÕÛ
+# ç¡®å®šæœ€ä¼˜æ¨¡å‹æ˜¯ç¬¬å‡ æŠ˜
 num.1<-which.max(auc_value.1)
 num.2<-which.max(auc_value.2)
 num.3<-which.max(auc_value.3)
@@ -839,9 +821,9 @@ print(auc_value.5)
 print(auc_value.5.new)
 print(auc_value.6)
 
-# ÑµÁ·¶ÔÓ¦µÄ×îÓÅÕÛ(numi)Ä£ĞÍ&ÔÚ²âÊÔ¼¯ÆÀ¼ÛÄ£ĞÍ
+# è®­ç»ƒå¯¹åº”çš„æœ€ä¼˜æŠ˜(numi)æ¨¡å‹&åœ¨æµ‹è¯•é›†è¯„ä»·æ¨¡å‹
 
-# LDA ÁªºÏD¶ş¾ÛÌå
+# LDA è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num.1]],]   
 
 fold_train <- dataset[-folds[[num.1]],]
@@ -850,12 +832,12 @@ fold_pre13 <- lda(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plast
                   data=fold_train) 
 
 fold_predict13 <- predict(fold_pre13, newdata=fold_test, type="response")
-fold_predict13 <- as.data.frame(fold_predict13)$posterior.ÓĞÉî¾²ÂöÑªË¨
+fold_predict13 <- as.data.frame(fold_predict13)$posterior.æœ‰æ·±é™è„‰è¡€æ “
 
 roc13 <- roc(as.numeric(fold_test[,59]),fold_predict13)
 plot(roc13, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_13 <- ifelse(fold_predict13 >= 0.238,2,1)
@@ -865,10 +847,10 @@ table(pred_13, fold_test$DVT)
 plot(fold_pre13, panel = panel.lda, 
      abbrev = FALSE, xlab = "LD1", ylab = "LD2")
 
-write.csv(fold_pre13$scaling, file = "F:/004/Ö×ÁöÑªË¨Êı¾İ¿â¼°·ÖÎö½á¹û/2100Àı ·ÖÎö½á¹û - 3/LDA»Ø¹éÏµÊıÓĞDD.csv")
+write.csv(fold_pre13$scaling, file = "F:/004/è‚¿ç˜¤è¡€æ “æ•°æ®åº“åŠåˆ†æç»“æœ/2100ä¾‹ åˆ†æç»“æœ - 3/LDAå›å½’ç³»æ•°æœ‰DD.csv")
 
 
-# LR ÁªºÏD¶ş¾ÛÌå
+# LR è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num.2]],]   
 
 fold_train <- dataset[-folds[[num.2]],]
@@ -881,7 +863,7 @@ fold_predict14 <- predict(fold_pre14,type='response', newdata=fold_test)
 roc14 <- roc(as.numeric(fold_test[,59]),fold_predict14)
 plot(roc14, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_14 <- ifelse(fold_predict14 >= 0.263,2,1)
@@ -890,14 +872,14 @@ table(pred_14, fold_test$DVT)
 
 brier <- mean((fold_predict14-(as.numeric(fold_train$DVT)-1))^2)
 brier   # 0.1507073
-############ »æÖÆ½»»¥Ê½ÁĞÏßÍ¼   ############
+############ ç»˜åˆ¶äº¤äº’å¼åˆ—çº¿å›¾   ############
 
 library(regplot)
 fold_train <- dataset[-folds[[num.2]],]
 regplot(fold_pre14,observation=fold_train[2,],points=TRUE) 
 regplot(fold_pre14,observation=fold_train[2,]) 
 
-# CART ÁªºÏD¶ş¾ÛÌå
+# CART è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num.3]],]   
 
 fold_train <- dataset[-folds[[num.3]],]
@@ -910,13 +892,13 @@ fold_predict15 <- predict(fold_pre15,type='class', newdata=fold_test)
 roc15 <- roc(as.numeric(fold_test[,59]),as.numeric(fold_predict15))
 plot(roc15, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict15, fold_test$DVT)
 (53+8)/72   ###  0.847  ###
 
-# RF ÁªºÏD¶ş¾ÛÌå
+# RF è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num.4]],]   
 
 fold_train <- dataset[-folds[[num.4]],]
@@ -929,13 +911,13 @@ fold_predict16 <- predict(fold_pre16,type='response', newdata=fold_test)
 roc16 <- roc(as.numeric(fold_test[,59]),as.numeric(fold_predict16))
 plot(roc16, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict16, fold_test$DVT)
 (52+9)/72   ###  0.847  ###
 
-# RF ÁªºÏD¶ş¾ÛÌå
+# RF è”åˆDäºŒèšä½“
 fold_test <- dataset_train[folds[[num.4]],]   
 
 fold_train <- dataset_train[-folds[[num.4]],]
@@ -949,7 +931,7 @@ fold_predict16 <- predict(fold_pre16,type='response', newdata=fold_test)
 roc16 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_predict16))
 plot(roc16, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 # 0.683
 table(fold_predict16, fold_test$DVT)
@@ -957,7 +939,7 @@ table(fold_predict16, fold_test$DVT)
 
 varImpPlot(fold_pre16)
 
-# SVM ÁªºÏD¶ş¾ÛÌå
+# SVM è”åˆDäºŒèšä½“
 
 fold_test <- dataset[folds[[num.5]],]   
 
@@ -971,102 +953,102 @@ fold_predict17 <- predict(fold_pre17,type='response', newdata=fold_test)
 roc17 <- roc(as.numeric(fold_test[,59]),as.numeric(fold_predict17))
 plot(roc17, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict17, fold_test$DVT)
 (52+7)/73   ###  0.808  ###
 
-# Khorana ÁªºÏD¶ş¾ÛÌå
+# Khorana è”åˆDäºŒèšä½“
 
-fold_test <- dataset[folds[[num.6]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
-fold_test$K_Score_DD <- as.numeric(fold_test$K_Score)+as.numeric(fold_test$D¶ş¾ÛÌå)
+fold_test <- dataset[folds[[num.6]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
+fold_test$K_Score_DD <- as.numeric(fold_test$K_Score)+as.numeric(fold_test$DäºŒèšä½“)
 roc18 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_test$K_Score_DD))
 plot(roc18, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_18 <- ifelse(fold_test$K_Score_DD >= 4,2,1)
 table(pred_18, fold_test$DVT)
 (39+12)/72   ###  0.778  ###
 
-# ÔÚÑéÖ¤¼¯ÆÀ¼ÛÄ£ĞÍ
+# åœ¨éªŒè¯é›†è¯„ä»·æ¨¡å‹
 
-# LDA ÁªºÏD¶ş¾ÛÌå
+# LDA è”åˆDäºŒèšä½“
 
 fold_predict31 <- predict(fold_pre13, newdata=validation, type="response")
-fold_predict31 <- as.data.frame(fold_predict31)$posterior.ÓĞÉî¾²ÂöÑªË¨
+fold_predict31 <- as.data.frame(fold_predict31)$posterior.æœ‰æ·±é™è„‰è¡€æ “
 
 roc31 <- roc(as.numeric(validation[,60]),fold_predict31)
 plot(roc31, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_31 <- ifelse(fold_predict31 >= 0.227,2,1)
 table(pred_31, validation$DVT)
 (159+52)/310   ###  0.681  ###
 
-# LR ÁªºÏD¶ş¾ÛÌå
+# LR è”åˆDäºŒèšä½“
 
 fold_predict32 <- predict(fold_pre14,type='response', newdata=validation)  
 
 roc32 <- roc(as.numeric(validation[,60]),fold_predict32)
 plot(roc32, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_32 <- ifelse(fold_predict32 >= 0.238,2,1)
 table(pred_32, validation$DVT)
 (159+53)/310   ###  0.732  ###
 
-# CART ÁªºÏD¶ş¾ÛÌå
+# CART è”åˆDäºŒèšä½“
 
 fold_predict33 <- predict(fold_pre15,type='class', newdata=validation)  
 
 roc33 <- roc(as.numeric(validation[,60]),as.numeric(fold_predict33))
 plot(roc33, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict33, validation$DVT)
 (210+28)/310   ###  0.768  ###
 
-# RF ÁªºÏD¶ş¾ÛÌå
+# RF è”åˆDäºŒèšä½“
 
 fold_predict34 <- predict(fold_pre16,type='response', newdata=validation)  
 
 roc34 <- roc(as.numeric(validation[,60]),as.numeric(fold_predict34))
 plot(roc34, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict34, validation$DVT)
 (224+26)/310   ###  0.813  ###
 
-# SVM ÁªºÏD¶ş¾ÛÌå
+# SVM è”åˆDäºŒèšä½“
 set.seed(7)
 fold_predict35 <- predict(fold_pre17,type='response', newdata=validation)  
 
 roc35 <- roc(as.numeric(validation[,60]),as.numeric(fold_predict35))
 plot(roc35, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict35, validation$DVT)
 (222+29)/310   ###  0.810  ###
 
-# Khorana ÁªºÏD¶ş¾ÛÌå
-validation$K_Score_DD <- as.numeric(validation$K_Score)+as.numeric(validation$D¶ş¾ÛÌå)
+# Khorana è”åˆDäºŒèšä½“
+validation$K_Score_DD <- as.numeric(validation$K_Score)+as.numeric(validation$DäºŒèšä½“)
 roc36 <- roc(as.numeric(validation$DVT),as.numeric(validation$K_Score_DD))
 plot(roc36, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_36 <- ifelse(validation$K_Score_DD >= 5,2,1)
@@ -1074,7 +1056,7 @@ table(pred_36, validation$DVT)
 (198+25)/310   ###  0.719 ###
 
 
-############   »æÖÆĞ£×¼ÇúÏß   ############
+############   ç»˜åˆ¶æ ¡å‡†æ›²çº¿   ############
 
 LDA <- fold_predict25
 LR <- fold_predict26
@@ -1088,7 +1070,7 @@ library(rms)
 trellis.par.set(caretTheme())
 cal_obj1 <- calibration(validation$DVT ~ LDA+LR+CART+RF+SVM+Khorana,
                         data = validation,
-                        cuts = 10,class = "ÓĞÉî¾²ÂöÑªË¨")
+                        cuts = 10,class = "æœ‰æ·±é™è„‰è¡€æ “")
 plot(cal_obj1, auto.key = list(columns = 3,
                                lines = TRUE,
                                points = FALSE))
@@ -1111,7 +1093,7 @@ library(rms)
 trellis.par.set(caretTheme())
 cal_obj2 <- calibration(validation$DVT ~ LDA_DD+LR_DD+CART_DD+RF_DD+SVM_DD+Khorana_DD,
                         data = validation,
-                        cuts = 10,class = "ÓĞÉî¾²ÂöÑªË¨")
+                        cuts = 10,class = "æœ‰æ·±é™è„‰è¡€æ “")
 plot(cal_obj2, auto.key = list(columns = 3,
                                lines = TRUE,
                                points = FALSE))
@@ -1122,7 +1104,7 @@ b <- ggplot(cal_obj2)+geom_line()+geom_abline(intercept=100,slope=-1)+
 b <- ggplot(cal_obj2)+geom_line()+
   labs(title = "Calibration Curves with D-Dimer in the Validation set")+theme(plot.title = element_text(hjust = 0.5))
 
-############   »æÖÆROCÇúÏß   ############
+############   ç»˜åˆ¶ROCæ›²çº¿   ############
 
 library("plotROC")
 validation$LDA <- LDA
@@ -1157,7 +1139,7 @@ d <- ggplot(longtest2, aes(d = D, m = M, color = name)) +
   geom_roc(n.cuts = 0) +
   labs(title = "Fig.5. ROC Curves with D-Dimer in the Validation set")+theme(plot.title = element_text(hjust = 0.5))+geom_abline()
 
-############   »æÖÆ±äÁ¿ÖØÒªĞÔÍ¼±í   ############
+############   ç»˜åˆ¶å˜é‡é‡è¦æ€§å›¾è¡¨   ############
 
 library(randomForest)
 Fig_3_Relative_importance <- fold_pre10
@@ -1167,7 +1149,7 @@ library(randomForest)
 Fig_4_Relative_importance <- fold_pre.4
 f <- varImpPlot(Fig_4__Relative_importance, main = "Fig.4. Relative importance according to D-Dimer RF")
 
-######  »æÖÆ×éÍ¼   ######
+######  ç»˜åˆ¶ç»„å›¾   ######
 
 library(ggpubr)
 a <- ggplot(cal_obj1)+geom_line()+
@@ -1187,7 +1169,7 @@ e <- varImpPlot(Fig_6__Relative_importance)
 
 ggarrange(ggarrange(c,d, ncol = 2, labels = c("A","B")), a, nrow=2, labels="C")
 
-#########    Èı¡¢Ëæ»úÉ­ÁÖ±äÁ¿ÖØÒªĞÔÅÅĞò   ######### 
+#########    äºŒã€éšæœºæ£®æ—å˜é‡é‡è¦æ€§æ’åº   ######### 
 
 randomForest <- randomForest(DVT~Sex+Smoking+Drinking+Bed+Plaster+TumorStage+Chemotherapy+
                                TargetedTherapy+Surgery+Radiotherapy+Immunotherapy+CVC+
@@ -1207,7 +1189,7 @@ randomForest_DD <- randomForest(DVT~Sex+Smoking+Drinking+Bed+Plaster+TumorStage+
 
 varImpPlot(randomForest_DD)
 
-##########  3.1 È·¶¨±äÁ¿³Ø   ##########
+##########  2.1 ç¡®å®šå˜é‡æ±    ##########
 
 # DVT~VTEHistory+Chemotherapy+Age+Bed+log2WBC+log2CCI+TumorStage+log2PLT+Transfusion+Surgery
 # DVT~log2WBC+log2PLT+log2LOS+log2Hb+log2CCI+TumorStage+Age+K_Cancerlevel+VTEHistory+Chemotherapy
@@ -1228,7 +1210,7 @@ library(randomForest) # RF
 library(pROC) # ROC
 library(caret)
 
-##########  3.2 Ä£ĞÍ²ÎÊıµ÷ÓÅ   ##########
+##########  2.2 æ¨¡å‹å‚æ•°è°ƒä¼˜   ##########
 
 fitControl <- trainControl(method = "repeatedcv",
                            number = 10,
@@ -1239,7 +1221,7 @@ fitControl <- trainControl(method = "repeatedcv",
                            ## the following function
                            summaryFunction = twoClassSummary)
 
-## tune cart ÎŞDD£¬cp=0.001,AUC=0.597£»
+## tune cart æ— DDï¼Œcp=0.001,AUC=0.597ï¼›
 set.seed(7)
 cartgrid <- expand.grid(.cp=seq(0.001, 0.150, by=0.004))
 
@@ -1248,7 +1230,7 @@ cart_1 <- train(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI+TumorStage+log2P
 print(cart_1)
 plot(cart_1)
 
-## tune cart ÓĞDD£¬cp=0.005,AUC=0.690£»
+## tune cart æœ‰DDï¼Œcp=0.005,AUC=0.690ï¼›
 set.seed(7)
 cartgrid <- expand.grid(.cp=seq(0.001, 0.150, by=0.004))
 cart_2 <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2PLT+log2Hb,
@@ -1256,7 +1238,7 @@ cart_2 <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2PLT
 print(cart_2)
 plot(cart_2)
 
-## tune RF ÎŞDD£¬mtry = 2,AUC=0.689£»
+## tune RF æ— DDï¼Œmtry = 2,AUC=0.689ï¼›
 library(import)
 
 set.seed(7)
@@ -1266,7 +1248,7 @@ RF_1 <- train(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI+TumorStage+log2PLT
 print(RF_1)
 plot(RF_1)
 
-## tune RF ÓĞDD£¬mtry = 2,AUC=0.744£»
+## tune RF æœ‰DDï¼Œmtry = 2,AUC=0.744ï¼›
 set.seed(7)
 rfgrid <- expand.grid(.mtry=c(1, 2, 3, 4, 11))
 RF_2 <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2PLT+log2Hb,
@@ -1274,7 +1256,7 @@ RF_2 <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2PLT+l
 print(RF_2)
 plot(RF_2)
 
-## tune svm ÎŞDD£¬sigma = 0.025,C= 7, AUC=0.629£»
+## tune svm æ— DDï¼Œsigma = 0.025,C= 7, AUC=0.629ï¼›
 set.seed(7)
 svmgrid <- expand.grid(.sigma=c(0.025, 0.05, 0.1, 0.15), .C=seq(1, 10, by=1))
 svm_1 <- train(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI+TumorStage+log2PLT, 
@@ -1282,7 +1264,7 @@ svm_1 <- train(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI+TumorStage+log2PL
 print(svm_1)
 plot(svm_1)
 
-## tune svm ÓĞDD£¬sigma = 0.025,C= 2, AUC=0.729£»
+## tune svm æœ‰DDï¼Œsigma = 0.025,C= 2, AUC=0.729ï¼›
 set.seed(7)
 svmgrid <- expand.grid(.sigma=c(0.025, 0.05, 0.1, 0.15), .C=seq(1, 10, by=1))
 svm_2 <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2PLT+log2Hb,
@@ -1290,9 +1272,9 @@ svm_2 <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2PLT+
 print(svm_2)
 plot(svm_2)
 
-# tune gbm ÎŞDD£¬interaction.depth = 1
+# tune gbm æ— DDï¼Œinteraction.depth = 1
 # n.trees = 50, shrinkage =0.1 , n.minobsinnode = 20, 
-# AUC=0.661£»
+# AUC=0.661ï¼›
 
 library(gbm)
 
@@ -1311,9 +1293,9 @@ gbmFit <- train(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI+TumorStage+log2P
 print(gbmFit)
 plot(gbmFit)
 
-# tune gbm ÓĞDD£¬interaction.depth = , 
+# tune gbm æœ‰DDï¼Œinteraction.depth = , 
 # n.trees = , shrinkage = , n.minobsinnode = , 
-# AUC=0.£»
+# AUC=0.ï¼›
 set.seed(7)
 gbmFit_DD <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2PLT+log2Hb,
                    data=dataset, 
@@ -1326,7 +1308,7 @@ gbmFit_DD <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2
 print(gbmFit_DD)
 plot(gbmFit_DD)
 
-### È¡½»¼¯
+### å–äº¤é›†
 
 set.seed(7)
 knngrid <- expand.grid(.k=seq(1,20,by=1))
@@ -1343,11 +1325,11 @@ print(fit.knn_DD)
 plot(fit.knn_DD)
 
 
-# Êı¾İ¼¯·ÖÊ®ÕÛ
+# æ•°æ®é›†åˆ†åæŠ˜
 set.seed(7)
 folds <- createFolds(y=dataset[,59],k=10)
 
-# ¸ø¶¨²ÎÊı
+# ç»™å®šå‚æ•°
 max1=0; max2=0; max3=0;
 max4=0; max5=0; max6=0;
 num1=0; num2=0; num3=0;
@@ -1360,29 +1342,29 @@ auc_value5 <-as.numeric()
 auc_value5.new <-as.numeric()
 auc_value6 <-as.numeric()
 
-# ÑµÁ·¼¯½¨Ä£ºÍ²âÊÔ¼¯µ÷ÓÅ
-# LDA ²»ÁªºÏD¶ş¾ÛÌå
+# è®­ç»ƒé›†å»ºæ¨¡å’Œæµ‹è¯•é›†è°ƒä¼˜
+# LDA ä¸è”åˆDäºŒèšä½“
 
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre1 <- lda(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI+TumorStage+log2PLT,
                    data=fold_train)
   fold_predict1 <- predict(fold_pre1, newdata=fold_test, type="response") 
-  fold_predict1 <- as.data.frame(fold_predict1)$posterior.ÓĞÉî¾²ÂöÑªË¨
+  fold_predict1 <- as.data.frame(fold_predict1)$posterior.æœ‰æ·±é™è„‰è¡€æ “
   auc_value1 <- append(auc_value1,auc(as.numeric(fold_test$DVT),as.numeric(fold_predict1)))
   
 }  
 
-# LR²»ÁªºÏD¶ş¾ÛÌå
+# LRä¸è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre2 <- glm(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI+TumorStage+log2PLT,
                    data=fold_train, family ="binomial")  
@@ -1395,12 +1377,12 @@ for(i in 1:10){
 } 
 
 
-# cart²»ÁªºÏD¶ş¾ÛÌå
+# cartä¸è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre3 <- rpart(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI+TumorStage+log2PLT,
                      data=fold_train, control = rpart.control(cp="0.001"))  
@@ -1411,12 +1393,12 @@ for(i in 1:10){
   
 } 
 
-# RF ²»ÁªºÏD¶ş¾ÛÌå
+# RF ä¸è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   
   fold_pre4 <- randomForest(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI+TumorStage+log2PLT,
@@ -1427,12 +1409,12 @@ for(i in 1:10){
   auc_value4 <- append(auc_value4,auc(as.numeric(fold_test$DVT),as.numeric(fold_predict4)))
 } 
 
-# SVM ²»ÁªºÏD¶ş¾ÛÌå
+# SVM ä¸è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   
   fold_pre5 <- ksvm(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI+TumorStage+log2PLT,
@@ -1444,7 +1426,7 @@ for(i in 1:10){
 } 
 
 
-# È·¶¨×îÓÅÄ£ĞÍÊÇµÚ¼¸ÕÛ
+# ç¡®å®šæœ€ä¼˜æ¨¡å‹æ˜¯ç¬¬å‡ æŠ˜
 num1<-which.max(auc_value1)
 num2<-which.max(auc_value2)
 num3<-which.max(auc_value3)
@@ -1460,9 +1442,9 @@ print(auc_value5)
 print(auc_value5.new)
 print(auc_value6)
 
-# ÑµÁ·¶ÔÓ¦µÄ×îÓÅÕÛ(numi)Ä£ĞÍ&ÔÚ²âÊÔ¼¯ÆÀ¼ÛÄ£ĞÍ
+# è®­ç»ƒå¯¹åº”çš„æœ€ä¼˜æŠ˜(numi)æ¨¡å‹&åœ¨æµ‹è¯•é›†è¯„ä»·æ¨¡å‹
 
-# LDA ²»ÁªºÏD¶ş¾ÛÌå
+# LDA ä¸è”åˆDäºŒèšä½“
 
 fold_test <- dataset[folds[[num1]],]   
 
@@ -1472,12 +1454,12 @@ fold_pre7 <- lda(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI+TumorStage+log2
                  data=fold_train) 
 
 fold_predict7 <- predict(fold_pre7, newdata=fold_test, type="response")
-fold_predict7 <- as.data.frame(fold_predict7)$posterior.ÓĞÉî¾²ÂöÑªË¨
+fold_predict7 <- as.data.frame(fold_predict7)$posterior.æœ‰æ·±é™è„‰è¡€æ “
 
 roc7 <- roc(as.numeric(fold_test$DVT),fold_predict7)
 plot(roc7, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_7 <- ifelse(fold_predict7 >= 0.204,2,1)
@@ -1487,9 +1469,9 @@ table(pred_7, fold_test$DVT)
 plot(fold_pre7, panel = panel.lda, 
      abbrev = FALSE, xlab = "LD1", ylab = "LD2")
 
-write.csv(fold_pre7$scaling ,file = "F:/004/Ö×ÁöÑªË¨Êı¾İ¿â¼°·ÖÎö½á¹û/2100Àı ·ÖÎö½á¹û - 3/LDA»Ø¹éÏµÊıÎŞDD.csv")
+write.csv(fold_pre7$scaling ,file = "F:/004/è‚¿ç˜¤è¡€æ “æ•°æ®åº“åŠåˆ†æç»“æœ/2100ä¾‹ åˆ†æç»“æœ - 3/LDAå›å½’ç³»æ•°æ— DD.csv")
 
-# LR ²»ÁªºÏD¶ş¾ÛÌå
+# LR ä¸è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num2]],]   
 
 fold_train <- dataset[-folds[[num2]],]
@@ -1502,14 +1484,14 @@ fold_predict8 <- predict(fold_pre8,type='response', newdata=fold_test)
 roc8 <- roc(as.numeric(fold_test$DVT),fold_predict8)
 plot(roc8, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_7 <- ifelse(fold_predict7 >= 0.212,2,1)
 table(pred_7, fold_test$DVT)
 (41+11)/72   ###  0.722  ###
 
-# CART ²»ÁªºÏD¶ş¾ÛÌå
+# CART ä¸è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num3]],]   
 
 fold_train <- dataset[-folds[[num3]],]
@@ -1522,13 +1504,13 @@ fold_predict9 <- predict(fold_pre9,type='class', newdata=fold_test)
 roc9 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_predict9))
 plot(roc9, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict9, fold_test$DVT)
 (46+8)/72   ###  0.750  ###
 
-# RF ²»ÁªºÏD¶ş¾ÛÌå
+# RF ä¸è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num4]],]   
 
 fold_train <- dataset[-folds[[num4]],]
@@ -1541,13 +1523,13 @@ fold_predict10 <- predict(fold_pre10,type='response', newdata=fold_test)
 roc10 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_predict10))
 plot(roc10, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict10, fold_test$DVT)
 (54+3)/72   ###  0.792 ###
 
-# SVM ²»ÁªºÏD¶ş¾ÛÌå
+# SVM ä¸è”åˆDäºŒèšä½“
 
 fold_test <- dataset[folds[[num5]],]   
 
@@ -1561,84 +1543,84 @@ fold_predict11 <- predict(fold_pre11,type='response', newdata=fold_test)
 roc11 <- roc(as.numeric(fold_test[,59]),as.numeric(fold_predict11))
 plot(roc11, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict11, fold_test$DVT)
 (53+5)/73   ###  0.795  ###
 
-# ÔÚÑéÖ¤¼¯ÆÀ¼ÛÄ£ĞÍ
+# åœ¨éªŒè¯é›†è¯„ä»·æ¨¡å‹
 
-# LDA ²»ÁªºÏD¶ş¾ÛÌå
+# LDA ä¸è”åˆDäºŒèšä½“
 
 fold_predict25 <- predict(fold_pre7, newdata=validation, type="response")
-fold_predict25 <- as.data.frame(fold_predict25)$posterior.ÓĞÉî¾²ÂöÑªË¨
+fold_predict25 <- as.data.frame(fold_predict25)$posterior.æœ‰æ·±é™è„‰è¡€æ “
 
 roc25 <- roc(as.numeric(validation$DVT),fold_predict25)
 plot(roc25, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_25 <- ifelse(fold_predict25 >= 0.164,2,1)
 table(pred_25, validation$DVT)
 (126+62)/310   ###  0.606  ###
 
-# LR ²»ÁªºÏD¶ş¾ÛÌå
+# LR ä¸è”åˆDäºŒèšä½“
 
 fold_predict26 <- predict(fold_pre8,type='response', newdata=validation)  
 
 roc26 <- roc(as.numeric(validation$DVT),fold_predict26)
 plot(roc26, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_26 <- ifelse(fold_predict26 >= 0.180,2,1)
 table(pred_26, validation$DVT)
 (126+61)/310   ###  0.603  ###
 
-# CART ²»ÁªºÏD¶ş¾ÛÌå
+# CART ä¸è”åˆDäºŒèšä½“
 
 fold_predict27 <- predict(fold_pre9,type='class', newdata=validation)  
 
 roc27 <- roc(as.numeric(validation$DVT),as.numeric(fold_predict27))
 plot(roc27, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict27, validation$DVT)
 (207+26)/310   ###  0.752  ###
 
-# RF ²»ÁªºÏD¶ş¾ÛÌå
+# RF ä¸è”åˆDäºŒèšä½“
 
 fold_predict28 <- predict(fold_pre10,type='response', newdata=validation)  
 
 roc28 <- roc(as.numeric(validation$DVT),as.numeric(fold_predict28))
 plot(roc28, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict28, validation$DVT)
 (223+17)/310   ###  0.774  ###
 
-# SVM ²»ÁªºÏD¶ş¾ÛÌå
+# SVM ä¸è”åˆDäºŒèšä½“
 
 fold_predict29 <- predict(fold_pre11,type='response', newdata=validation)  
 
 roc29 <- roc(as.numeric(validation$DVT),as.numeric(fold_predict29))
 plot(roc29, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict29, validation$DVT)
 (215+16)/310   ###  0.745  ###
 
 
-############   3.3 »æÖÆĞ£×¼ÇúÏß   ############
+############   2.3 ç»˜åˆ¶æ ¡å‡†æ›²çº¿   ############
 
 LDA <- fold_predict25
 LR <- fold_predict26
@@ -1656,11 +1638,11 @@ plot(cal_obj, type = "l", auto.key = list(columns = 3,
                                           lines = TRUE,
                                           points = FALSE))
 
-# 6.2 ÁªºÏD¶ş¾ÛÌåËã·¨²âÆÀ
+# 6.2 è”åˆDäºŒèšä½“ç®—æ³•æµ‹è¯„
 
-# Ê®ÕÛ½»²æÑéÖ¤µÄ·½·¨
+# åæŠ˜äº¤å‰éªŒè¯çš„æ–¹æ³•
 
-#¼ÓÔØ°ü
+#åŠ è½½åŒ…
 library(MASS) # LDA
 library(rms) # LR
 library(rpart) # CART
@@ -1669,11 +1651,11 @@ library(randomForest) # RF
 library(pROC) # ROC
 library(caret)
 
-# Êı¾İ¼¯·ÖÊ®ÕÛ
+# æ•°æ®é›†åˆ†åæŠ˜
 set.seed(7)
 folds <- createFolds(y=dataset[,59],k=10)
 
-# ¸ø¶¨²ÎÊı
+# ç»™å®šå‚æ•°
 
 num7=0; num8=0; num9=0;
 num10=0; num11=0; num12=0
@@ -1692,19 +1674,19 @@ auc_value11 <-as.numeric()
 auc_value11.new <-as.numeric()
 auc_value12 <-as.numeric()
 
-# ÑµÁ·¼¯½¨Ä£ºÍ²âÊÔ¼¯µ÷ÓÅ
-# LDA ÁªºÏD¶ş¾ÛÌå
+# è®­ç»ƒé›†å»ºæ¨¡å’Œæµ‹è¯•é›†è°ƒä¼˜
+# LDA è”åˆDäºŒèšä½“
 
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre.1 <- lda(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2PLT+log2Hb,
                     data=fold_train)
   fold_predict.1 <- predict(fold_pre.1, newdata=fold_test, type="response") 
-  fold_predict.1 <- as.data.frame(fold_predict.1)$posterior.ÓĞÉî¾²ÂöÑªË¨
+  fold_predict.1 <- as.data.frame(fold_predict.1)$posterior.æœ‰æ·±é™è„‰è¡€æ “
   auc_value.1 <- append(auc_value.1,auc(as.numeric(fold_test[,59]),as.numeric(fold_predict.1)))
   
 }  
@@ -1712,12 +1694,12 @@ for(i in 1:10){
 plot(fold_pre.1 , panel = panel.lda, 
      abbrev = FALSE, xlab = "LD1", ylab = "LD2")
 
-# LRÁªºÏD¶ş¾ÛÌå
+# LRè”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre.2 <- glm(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2PLT+log2Hb,
                     data=fold_train, family ="binomial")  
@@ -1729,12 +1711,12 @@ for(i in 1:10){
   
 } 
 
-# cartÁªºÏD¶ş¾ÛÌå
+# cartè”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre.3 <- rpart(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2PLT+log2Hb,
                       data=fold_train, control = rpart.control(cp="0.005"))  
@@ -1745,12 +1727,12 @@ for(i in 1:10){
   
 } 
 
-# RF ÁªºÏD¶ş¾ÛÌå
+# RF è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   
   fold_pre.4 <- randomForest(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2PLT+log2Hb,
@@ -1761,13 +1743,13 @@ for(i in 1:10){
   auc_value.4 <- append(auc_value.4,auc(as.numeric(fold_test[,59]),as.numeric(fold_predict.4)))
 } 
 
-# SVMÁªºÏD¶ş¾ÛÌå
+# SVMè”åˆDäºŒèšä½“
 
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   
   fold_pre.5 <- ksvm(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2PLT+log2Hb,
@@ -1779,7 +1761,7 @@ for(i in 1:10){
 }
 
 
-# È·¶¨×îÓÅÄ£ĞÍÊÇµÚ¼¸ÕÛ
+# ç¡®å®šæœ€ä¼˜æ¨¡å‹æ˜¯ç¬¬å‡ æŠ˜
 num.1<-which.max(auc_value.1)
 num.2<-which.max(auc_value.2)
 num.3<-which.max(auc_value.3)
@@ -1795,9 +1777,9 @@ print(auc_value.5)
 print(auc_value.5.new)
 print(auc_value.6)
 
-# ÑµÁ·¶ÔÓ¦µÄ×îÓÅÕÛ(numi)Ä£ĞÍ&ÔÚ²âÊÔ¼¯ÆÀ¼ÛÄ£ĞÍ
+# è®­ç»ƒå¯¹åº”çš„æœ€ä¼˜æŠ˜(numi)æ¨¡å‹&åœ¨æµ‹è¯•é›†è¯„ä»·æ¨¡å‹
 
-# LDA ÁªºÏD¶ş¾ÛÌå
+# LDA è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num.1]],]   
 
 fold_train <- dataset[-folds[[num.1]],]
@@ -1806,12 +1788,12 @@ fold_pre13 <- lda(DVT~log2DDimer+VTEHistory+Age+log2CCI+TumorStage+log2WBC+log2P
                   data=fold_train) 
 
 fold_predict13 <- predict(fold_pre13, newdata=fold_test, type="response")
-fold_predict13 <- as.data.frame(fold_predict13)$posterior.ÓĞÉî¾²ÂöÑªË¨
+fold_predict13 <- as.data.frame(fold_predict13)$posterior.æœ‰æ·±é™è„‰è¡€æ “
 
 roc13 <- roc(as.numeric(fold_test[,59]),fold_predict13)
 plot(roc13, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_13 <- ifelse(fold_predict13 >= 0.166,2,1)
@@ -1821,10 +1803,10 @@ table(pred_13, fold_test$DVT)
 plot(fold_pre13, panel = panel.lda, 
      abbrev = FALSE, xlab = "LD1", ylab = "LD2")
 
-write.csv(fold_pre13$scaling, file = "F:/004/Ö×ÁöÑªË¨Êı¾İ¿â¼°·ÖÎö½á¹û/2100Àı ·ÖÎö½á¹û - 3/LDA»Ø¹éÏµÊıÓĞDD.csv")
+write.csv(fold_pre13$scaling, file = "F:/004/è‚¿ç˜¤è¡€æ “æ•°æ®åº“åŠåˆ†æç»“æœ/2100ä¾‹ åˆ†æç»“æœ - 3/LDAå›å½’ç³»æ•°æœ‰DD.csv")
 
 
-# LR ÁªºÏD¶ş¾ÛÌå
+# LR è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num.2]],]   
 
 fold_train <- dataset[-folds[[num.2]],]
@@ -1837,14 +1819,14 @@ fold_predict14 <- predict(fold_pre14,type='response', newdata=fold_test)
 roc14 <- roc(as.numeric(fold_test[,59]),fold_predict14)
 plot(roc14, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_14 <- ifelse(fold_predict14 >= 0.146,2,1)
 table(pred_14, fold_test$DVT)
 (31+16)/73   ###  0.644  ###
 
-# CART ÁªºÏD¶ş¾ÛÌå
+# CART è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num.3]],]   
 
 fold_train <- dataset[-folds[[num.3]],]
@@ -1857,13 +1839,13 @@ fold_predict15 <- predict(fold_pre15,type='class', newdata=fold_test)
 roc15 <- roc(as.numeric(fold_test[,59]),as.numeric(fold_predict15))
 plot(roc15, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict15, fold_test$DVT)
 (51+8)/73   ###  0.808  ###
 
-# RF ÁªºÏD¶ş¾ÛÌå
+# RF è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num.4]],]   
 
 fold_train <- dataset[-folds[[num.4]],]
@@ -1876,13 +1858,13 @@ fold_predict16 <- predict(fold_pre16,type='response', newdata=fold_test)
 roc16 <- roc(as.numeric(fold_test[,59]),as.numeric(fold_predict16))
 plot(roc16, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict16, fold_test$DVT)
 (54+8)/73   ###  0.847  ###
 
-# SVM ÁªºÏD¶ş¾ÛÌå
+# SVM è”åˆDäºŒèšä½“
 
 fold_test <- dataset[folds[[num.5]],]   
 
@@ -1896,97 +1878,97 @@ fold_predict17 <- predict(fold_pre17,type='response', newdata=fold_test)
 roc17 <- roc(as.numeric(fold_test[,59]),as.numeric(fold_predict17))
 plot(roc17, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict17, fold_test$DVT)
 (55+5)/73   ###  0.822  ###
 
 
-# ÔÚÑéÖ¤¼¯ÆÀ¼ÛÄ£ĞÍ
+# åœ¨éªŒè¯é›†è¯„ä»·æ¨¡å‹
 
-# LDA ÁªºÏD¶ş¾ÛÌå
+# LDA è”åˆDäºŒèšä½“
 
 fold_predict31 <- predict(fold_pre13, newdata=validation, type="response")
-fold_predict31 <- as.data.frame(fold_predict31)$posterior.ÓĞÉî¾²ÂöÑªË¨
+fold_predict31 <- as.data.frame(fold_predict31)$posterior.æœ‰æ·±é™è„‰è¡€æ “
 
 roc31 <- roc(as.numeric(validation[,60]),fold_predict31)
 plot(roc31, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_31 <- ifelse(fold_predict31 >= 0.357,2,1)
 table(pred_31, validation$DVT)
 (213+38)/310   ###  0.681  ###
 
-# LR ÁªºÏD¶ş¾ÛÌå
+# LR è”åˆDäºŒèšä½“
 
 fold_predict32 <- predict(fold_pre14,type='response', newdata=validation)  
 
 roc32 <- roc(as.numeric(validation[,60]),fold_predict32)
 plot(roc32, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_32 <- ifelse(fold_predict32 >= 0.322,2,1)
 table(pred_32, validation$DVT)
 (196+41)/310   ###  0.765  ###
 
-# CART ÁªºÏD¶ş¾ÛÌå
+# CART è”åˆDäºŒèšä½“
 
 fold_predict33 <- predict(fold_pre15,type='class', newdata=validation)  
 
 roc33 <- roc(as.numeric(validation[,60]),as.numeric(fold_predict33))
 plot(roc33, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict33, validation$DVT)
 (209+30)/310   ###  0.771  ###
 
-# RF ÁªºÏD¶ş¾ÛÌå
+# RF è”åˆDäºŒèšä½“
 
 fold_predict34 <- predict(fold_pre16,type='response', newdata=validation)  
 
 roc34 <- roc(as.numeric(validation[,60]),as.numeric(fold_predict34))
 plot(roc34, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict34, validation$DVT)
-# RF ÁªºÏD¶ş¾ÛÌå
+# RF è”åˆDäºŒèšä½“
 
 fold_predict34 <- predict(fold_pre16,type='response', newdata=validation)  
 
 roc34 <- roc(as.numeric(validation[,60]),as.numeric(fold_predict34))
 plot(roc34, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict34, validation$DVT)
 (227+29)/310    ###  0.826  ###
 
-# SVM ÁªºÏD¶ş¾ÛÌå
+# SVM è”åˆDäºŒèšä½“
 
 fold_predict35 <- predict(fold_pre17,type='response', newdata=validation)  
 
 roc35 <- roc(as.numeric(validation[,60]),as.numeric(fold_predict35))
 plot(roc35, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict35, validation$DVT)
 (233+23)/310   ###  0.826  ###
 
-#########    ËÄ¡¢ÈıÖÖ·½·¨,È¡½»¼¯   ######### 
+#########   ä¸‰ã€ä¸‰ç§æ–¹æ³•,å–äº¤é›†   ######### 
 
-##########  4.1 È·¶¨±äÁ¿³Ø   ##########
+##########  3.1 ç¡®å®šå˜é‡æ±    ##########
 
 # DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI
 
@@ -2001,7 +1983,7 @@ library(randomForest) # RF
 library(pROC) # ROC
 library(caret)
 
-##########  4.2 Ä£ĞÍ²ÎÊıµ÷ÓÅ   ##########
+##########  3.2 æ¨¡å‹å‚æ•°è°ƒä¼˜   ##########
 
 fitControl <- trainControl(method = "repeatedcv",
                            number = 10,
@@ -2012,7 +1994,7 @@ fitControl <- trainControl(method = "repeatedcv",
                            ## the following function
                            summaryFunction = twoClassSummary)
 
-## tune cart ÎŞDD£¬cp=0.001,AUC=0.608£»
+## tune cart æ— DDï¼Œcp=0.001,AUC=0.608ï¼›
 set.seed(7)
 cartgrid <- expand.grid(.cp=seq(0.001, 0.150, by=0.004))
 
@@ -2021,7 +2003,7 @@ cart_1 <- train(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI,
 print(cart_1)
 plot(cart_1)
 
-## tune cart ÓĞDD£¬cp=0.005,AUC=0.705£»
+## tune cart æœ‰DDï¼Œcp=0.005,AUC=0.705ï¼›
 set.seed(7)
 cartgrid <- expand.grid(.cp=seq(0.001, 0.150, by=0.004))
 cart_2 <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
@@ -2029,7 +2011,7 @@ cart_2 <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
 print(cart_2)
 plot(cart_2)
 
-## tune RF ÎŞDD£¬mtry = 1,AUC=0.669£»
+## tune RF æ— DDï¼Œmtry = 1,AUC=0.669ï¼›
 library(import)
 
 set.seed(7)
@@ -2039,7 +2021,7 @@ RF_1 <- train(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI,
 print(RF_1)
 plot(RF_1)
 
-## tune RF ÓĞDD£¬mtry = 1,AUC=0.741£»
+## tune RF æœ‰DDï¼Œmtry = 1,AUC=0.741ï¼›
 set.seed(7)
 rfgrid <- expand.grid(.mtry=c(1, 2, 3, 4, 11))
 RF_2 <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
@@ -2047,7 +2029,7 @@ RF_2 <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
 print(RF_2)
 plot(RF_2)
 
-## tune svm ÎŞDD£¬sigma = 0.025,C= 2, AUC=0.650£»
+## tune svm æ— DDï¼Œsigma = 0.025,C= 2, AUC=0.650ï¼›
 set.seed(7)
 svmgrid <- expand.grid(.sigma=c(0.025, 0.05, 0.1, 0.15), .C=seq(1, 10, by=1))
 svm_1 <- train(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI, 
@@ -2055,7 +2037,7 @@ svm_1 <- train(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI,
 print(svm_1)
 plot(svm_1)
 
-## tune svm ÓĞDD£¬sigma = 0.025,C= 1, AUC=0.735£»
+## tune svm æœ‰DDï¼Œsigma = 0.025,C= 1, AUC=0.735ï¼›
 set.seed(7)
 svmgrid <- expand.grid(.sigma=c(0.025, 0.05, 0.1, 0.15), .C=seq(1, 10, by=1))
 svm_2 <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
@@ -2063,9 +2045,9 @@ svm_2 <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
 print(svm_2)
 plot(svm_2)
 
-# tune gbm ÎŞDD£¬interaction.depth = 1
+# tune gbm æ— DDï¼Œinteraction.depth = 1
 # n.trees = 50, shrinkage =0.1 , n.minobsinnode = 20, 
-# AUC=0.661£»
+# AUC=0.661ï¼›
 
 library(gbm)
 
@@ -2084,9 +2066,9 @@ gbmFit <- train(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI, data=dataset,
 print(gbmFit)
 plot(gbmFit)
 
-# tune gbm ÓĞDD£¬interaction.depth = 1, 
+# tune gbm æœ‰DDï¼Œinteraction.depth = 1, 
 # n.trees = 100, shrinkage = 0.1, n.minobsinnode = 20, 
-# AUC=0.729£»
+# AUC=0.729ï¼›
 set.seed(7)
 gbmFit_DD <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
                    data=dataset, 
@@ -2099,7 +2081,7 @@ gbmFit_DD <- train(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
 print(gbmFit_DD)
 plot(gbmFit_DD)
 
-### È¡½»¼¯
+### å–äº¤é›†
 
 set.seed(7)
 knngrid <- expand.grid(.k=seq(1,20,by=1))
@@ -2116,11 +2098,11 @@ print(fit.knn_DD)
 plot(fit.knn_DD)
 
 
-# Êı¾İ¼¯·ÖÊ®ÕÛ
+# æ•°æ®é›†åˆ†åæŠ˜
 set.seed(7)
 folds <- createFolds(y=dataset[,59],k=10)
 
-# ¸ø¶¨²ÎÊı
+# ç»™å®šå‚æ•°
 max1=0; max2=0; max3=0;
 max4=0; max5=0; max6=0;
 num1=0; num2=0; num3=0;
@@ -2133,29 +2115,29 @@ auc_value5 <-as.numeric()
 auc_value5.new <-as.numeric()
 auc_value6 <-as.numeric()
 
-# ÑµÁ·¼¯½¨Ä£ºÍ²âÊÔ¼¯µ÷ÓÅ
-# LDA ²»ÁªºÏD¶ş¾ÛÌå
+# è®­ç»ƒé›†å»ºæ¨¡å’Œæµ‹è¯•é›†è°ƒä¼˜
+# LDA ä¸è”åˆDäºŒèšä½“
 
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre1 <- lda(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI,
                    data=fold_train)
   fold_predict1 <- predict(fold_pre1, newdata=fold_test, type="response") 
-  fold_predict1 <- as.data.frame(fold_predict1)$posterior.ÓĞÉî¾²ÂöÑªË¨
+  fold_predict1 <- as.data.frame(fold_predict1)$posterior.æœ‰æ·±é™è„‰è¡€æ “
   auc_value1 <- append(auc_value1,auc(as.numeric(fold_test$DVT),as.numeric(fold_predict1)))
   
 }  
 
-# LR²»ÁªºÏD¶ş¾ÛÌå
+# LRä¸è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre2 <- glm(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI,
                    data=fold_train, family ="binomial")  
@@ -2168,12 +2150,12 @@ for(i in 1:10){
 } 
 
 
-# cart²»ÁªºÏD¶ş¾ÛÌå
+# cartä¸è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre3 <- rpart(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI,
                      data=fold_train, control = rpart.control(cp="0.001"))  
@@ -2184,12 +2166,12 @@ for(i in 1:10){
   
 } 
 
-# RF ²»ÁªºÏD¶ş¾ÛÌå
+# RF ä¸è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   
   fold_pre4 <- randomForest(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI,
@@ -2200,12 +2182,12 @@ for(i in 1:10){
   auc_value4 <- append(auc_value4,auc(as.numeric(fold_test$DVT),as.numeric(fold_predict4)))
 } 
 
-# SVM ²»ÁªºÏD¶ş¾ÛÌå
+# SVM ä¸è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   
   fold_pre5 <- ksvm(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI,
@@ -2217,7 +2199,7 @@ for(i in 1:10){
 } 
 
 
-# È·¶¨×îÓÅÄ£ĞÍÊÇµÚ¼¸ÕÛ
+# ç¡®å®šæœ€ä¼˜æ¨¡å‹æ˜¯ç¬¬å‡ æŠ˜
 num1<-which.max(auc_value1)
 num2<-which.max(auc_value2)
 num3<-which.max(auc_value3)
@@ -2233,9 +2215,9 @@ print(auc_value5)
 print(auc_value5.new)
 print(auc_value6)
 
-# ÑµÁ·¶ÔÓ¦µÄ×îÓÅÕÛ(numi)Ä£ĞÍ&ÔÚ²âÊÔ¼¯ÆÀ¼ÛÄ£ĞÍ
+# è®­ç»ƒå¯¹åº”çš„æœ€ä¼˜æŠ˜(numi)æ¨¡å‹&åœ¨æµ‹è¯•é›†è¯„ä»·æ¨¡å‹
 
-# LDA ²»ÁªºÏD¶ş¾ÛÌå
+# LDA ä¸è”åˆDäºŒèšä½“
 
 fold_test <- dataset[folds[[num1]],]   
 
@@ -2245,12 +2227,12 @@ fold_pre7 <- lda(DVT~VTEHistory+Chemotherapy+Age+log2WBC+log2CCI,
                  data=fold_train) 
 
 fold_predict7 <- predict(fold_pre7, newdata=fold_test, type="response")
-fold_predict7 <- as.data.frame(fold_predict7)$posterior.ÓĞÉî¾²ÂöÑªË¨
+fold_predict7 <- as.data.frame(fold_predict7)$posterior.æœ‰æ·±é™è„‰è¡€æ “
 
 roc7 <- roc(as.numeric(fold_test$DVT),fold_predict7)
 plot(roc7, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_7 <- ifelse(fold_predict7 >= 0.148,2,1)
@@ -2260,9 +2242,9 @@ table(pred_7, fold_test$DVT)
 plot(fold_pre7, panel = panel.lda, 
      abbrev = FALSE, xlab = "LD1", ylab = "LD2")
 
-write.csv(fold_pre7$scaling ,file = "F:/004/Ö×ÁöÑªË¨Êı¾İ¿â¼°·ÖÎö½á¹û/2100Àı ·ÖÎö½á¹û - 3/LDA»Ø¹éÏµÊıÎŞDD.csv")
+write.csv(fold_pre7$scaling ,file = "F:/004/è‚¿ç˜¤è¡€æ “æ•°æ®åº“åŠåˆ†æç»“æœ/2100ä¾‹ åˆ†æç»“æœ - 3/LDAå›å½’ç³»æ•°æ— DD.csv")
 
-# LR ²»ÁªºÏD¶ş¾ÛÌå
+# LR ä¸è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num2]],]   
 
 fold_train <- dataset[-folds[[num2]],]
@@ -2275,14 +2257,14 @@ fold_predict8 <- predict(fold_pre8,type='response', newdata=fold_test)
 roc8 <- roc(as.numeric(fold_test$DVT),fold_predict8)
 plot(roc8, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_7 <- ifelse(fold_predict7 >= 0.157,2,1)
 table(pred_7, fold_test$DVT)
 (34+12)/72   ###  0.639  ###
 
-# CART ²»ÁªºÏD¶ş¾ÛÌå
+# CART ä¸è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num3]],]   
 
 fold_train <- dataset[-folds[[num3]],]
@@ -2295,13 +2277,13 @@ fold_predict9 <- predict(fold_pre9,type='class', newdata=fold_test)
 roc9 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_predict9))
 plot(roc9, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict9, fold_test$DVT)
 (47+8)/72   ###  0.764  ###
 
-# RF ²»ÁªºÏD¶ş¾ÛÌå
+# RF ä¸è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num4]],]   
 
 fold_train <- dataset[-folds[[num4]],]
@@ -2314,13 +2296,13 @@ fold_predict10 <- predict(fold_pre10,type='response', newdata=fold_test)
 roc10 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_predict10))
 plot(roc10, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict10, fold_test$DVT)
 (49+6)/73   ###  0.753 ###
 
-# SVM ²»ÁªºÏD¶ş¾ÛÌå
+# SVM ä¸è”åˆDäºŒèšä½“
 
 fold_test <- dataset[folds[[num5]],]   
 
@@ -2334,95 +2316,95 @@ fold_predict11 <- predict(fold_pre11,type='response', newdata=fold_test)
 roc11 <- roc(as.numeric(fold_test[,59]),as.numeric(fold_predict11))
 plot(roc11, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict11, fold_test$DVT)
 (55+2)/73   ###  0.781  ###
 
-# ÔÚÑéÖ¤¼¯ÆÀ¼ÛÄ£ĞÍ
+# åœ¨éªŒè¯é›†è¯„ä»·æ¨¡å‹
 
-# LDA ²»ÁªºÏD¶ş¾ÛÌå
+# LDA ä¸è”åˆDäºŒèšä½“
 
 fold_predict25 <- predict(fold_pre7, newdata=validation, type="response")
-fold_predict25 <- as.data.frame(fold_predict25)$posterior.ÓĞÉî¾²ÂöÑªË¨
+fold_predict25 <- as.data.frame(fold_predict25)$posterior.æœ‰æ·±é™è„‰è¡€æ “
 
 roc25 <- roc(as.numeric(validation$DVT),fold_predict25)
 plot(roc25, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_25 <- ifelse(fold_predict25 >= 0.186,2,1)
 table(pred_25, validation$DVT)
 (146+59)/310   ###  0.661  ###
 
-# LR ²»ÁªºÏD¶ş¾ÛÌå
+# LR ä¸è”åˆDäºŒèšä½“
 
 fold_predict26 <- predict(fold_pre8,type='response', newdata=validation)  
 
 roc26 <- roc(as.numeric(validation$DVT),fold_predict26)
 plot(roc26, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_26 <- ifelse(fold_predict26 >= 0.199,2,1)
 table(pred_26, validation$DVT)
 (147+59)/310   ###  0.603  ###
 
-# CART ²»ÁªºÏD¶ş¾ÛÌå
+# CART ä¸è”åˆDäºŒèšä½“
 
 fold_predict27 <- predict(fold_pre9,type='class', newdata=validation)  
 
 roc27 <- roc(as.numeric(validation$DVT),as.numeric(fold_predict27))
 plot(roc27, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict27, validation$DVT)
 (210+22)/310   ###  0.748  ###
 
-# RF ²»ÁªºÏD¶ş¾ÛÌå
+# RF ä¸è”åˆDäºŒèšä½“
 
 fold_predict28 <- predict(fold_pre10,type='response', newdata=validation)  
 
 roc28 <- roc(as.numeric(validation$DVT),as.numeric(fold_predict28))
 plot(roc28, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict28, validation$DVT)
 (205+20)/310   ###  0.726  ###
 
-# SVM ²»ÁªºÏD¶ş¾ÛÌå
+# SVM ä¸è”åˆDäºŒèšä½“
 
 fold_predict29 <- predict(fold_pre11,type='response', newdata=validation)  
 
 roc29 <- roc(as.numeric(validation$DVT),as.numeric(fold_predict29))
 plot(roc29, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict29, validation$DVT)
-# SVM ²»ÁªºÏD¶ş¾ÛÌå
+# SVM ä¸è”åˆDäºŒèšä½“
 
 fold_predict29 <- predict(fold_pre11,type='response', newdata=validation)  
 
 roc29 <- roc(as.numeric(validation$DVT),as.numeric(fold_predict29))
 plot(roc29, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict29, validation$DVT)  
 (233+9)/310  ###  0.781  ###
 
 
-############   4.3 »æÖÆĞ£×¼ÇúÏß   ############
+############   3.3 ç»˜åˆ¶æ ¡å‡†æ›²çº¿   ############
 
 LDA <- fold_predict25
 LR <- fold_predict26
@@ -2440,11 +2422,11 @@ plot(cal_obj, type = "l", auto.key = list(columns = 3,
                                           lines = TRUE,
                                           points = FALSE))
 
-# 6.2 ÁªºÏD¶ş¾ÛÌåËã·¨²âÆÀ
+# 6.2 è”åˆDäºŒèšä½“ç®—æ³•æµ‹è¯„
 
-# Ê®ÕÛ½»²æÑéÖ¤µÄ·½·¨
+# åæŠ˜äº¤å‰éªŒè¯çš„æ–¹æ³•
 
-#¼ÓÔØ°ü
+#åŠ è½½åŒ…
 library(MASS) # LDA
 library(rms) # LR
 library(rpart) # CART
@@ -2453,11 +2435,11 @@ library(randomForest) # RF
 library(pROC) # ROC
 library(caret)
 
-# Êı¾İ¼¯·ÖÊ®ÕÛ
+# æ•°æ®é›†åˆ†åæŠ˜
 set.seed(7)
 folds <- createFolds(y=dataset[,59],k=10)
 
-# ¸ø¶¨²ÎÊı
+# ç»™å®šå‚æ•°
 
 num7=0; num8=0; num9=0;
 num10=0; num11=0; num12=0
@@ -2476,19 +2458,19 @@ auc_value11 <-as.numeric()
 auc_value11.new <-as.numeric()
 auc_value12 <-as.numeric()
 
-# ÑµÁ·¼¯½¨Ä£ºÍ²âÊÔ¼¯µ÷ÓÅ
-# LDA ÁªºÏD¶ş¾ÛÌå
+# è®­ç»ƒé›†å»ºæ¨¡å’Œæµ‹è¯•é›†è°ƒä¼˜
+# LDA è”åˆDäºŒèšä½“
 
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre.1 <- lda(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
                     data=fold_train)
   fold_predict.1 <- predict(fold_pre.1, newdata=fold_test, type="response") 
-  fold_predict.1 <- as.data.frame(fold_predict.1)$posterior.ÓĞÉî¾²ÂöÑªË¨
+  fold_predict.1 <- as.data.frame(fold_predict.1)$posterior.æœ‰æ·±é™è„‰è¡€æ “
   auc_value.1 <- append(auc_value.1,auc(as.numeric(fold_test[,59]),as.numeric(fold_predict.1)))
   
 }  
@@ -2496,12 +2478,12 @@ for(i in 1:10){
 plot(fold_pre.1 , panel = panel.lda, 
      abbrev = FALSE, xlab = "LD1", ylab = "LD2")
 
-# LRÁªºÏD¶ş¾ÛÌå
+# LRè”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre.2 <- glm(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
                     data=fold_train, family ="binomial")  
@@ -2513,12 +2495,12 @@ for(i in 1:10){
   
 } 
 
-# cartÁªºÏD¶ş¾ÛÌå
+# cartè”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   fold_pre.3 <- rpart(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
                       data=fold_train, control = rpart.control(cp="0.005"))  
@@ -2529,12 +2511,12 @@ for(i in 1:10){
   
 } 
 
-# RF ÁªºÏD¶ş¾ÛÌå
+# RF è”åˆDäºŒèšä½“
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   
   fold_pre.4 <- randomForest(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
@@ -2545,13 +2527,13 @@ for(i in 1:10){
   auc_value.4 <- append(auc_value.4,auc(as.numeric(fold_test[,59]),as.numeric(fold_predict.4)))
 } 
 
-# SVMÁªºÏD¶ş¾ÛÌå
+# SVMè”åˆDäºŒèšä½“
 
 for(i in 1:10){  
   
-  fold_test <- dataset[folds[[i]],]   #È¡folds[[i]]×÷Îª²âÊÔ¼¯  
+  fold_test <- dataset[folds[[i]],]   #å–folds[[i]]ä½œä¸ºæµ‹è¯•é›†  
   
-  fold_train <- dataset[-folds[[i]],]   # Ê£ÏÂµÄÊı¾İ×÷ÎªÑµÁ·¼¯    
+  fold_train <- dataset[-folds[[i]],]   # å‰©ä¸‹çš„æ•°æ®ä½œä¸ºè®­ç»ƒé›†    
   
   
   fold_pre.5 <- ksvm(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
@@ -2563,7 +2545,7 @@ for(i in 1:10){
 }
 
 
-# È·¶¨×îÓÅÄ£ĞÍÊÇµÚ¼¸ÕÛ
+# ç¡®å®šæœ€ä¼˜æ¨¡å‹æ˜¯ç¬¬å‡ æŠ˜
 num.1<-which.max(auc_value.1)
 num.2<-which.max(auc_value.2)
 num.3<-which.max(auc_value.3)
@@ -2579,9 +2561,9 @@ print(auc_value.5)
 print(auc_value.5.new)
 print(auc_value.6)
 
-# ÑµÁ·¶ÔÓ¦µÄ×îÓÅÕÛ(numi)Ä£ĞÍ&ÔÚ²âÊÔ¼¯ÆÀ¼ÛÄ£ĞÍ
+# è®­ç»ƒå¯¹åº”çš„æœ€ä¼˜æŠ˜(numi)æ¨¡å‹&åœ¨æµ‹è¯•é›†è¯„ä»·æ¨¡å‹
 
-# LDA ÁªºÏD¶ş¾ÛÌå
+# LDA è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num.1]],]   
 
 fold_train <- dataset[-folds[[num.1]],]
@@ -2590,12 +2572,12 @@ fold_pre13 <- lda(DVT~log2DDimer+VTEHistory+Age+log2CCI++log2WBC,
                   data=fold_train) 
 
 fold_predict13 <- predict(fold_pre13, newdata=fold_test, type="response")
-fold_predict13 <- as.data.frame(fold_predict13)$posterior.ÓĞÉî¾²ÂöÑªË¨
+fold_predict13 <- as.data.frame(fold_predict13)$posterior.æœ‰æ·±é™è„‰è¡€æ “
 
 roc13 <- roc(as.numeric(fold_test[,59]),fold_predict13)
 plot(roc13, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_13 <- ifelse(fold_predict13 >= 0.160,2,1)
@@ -2605,10 +2587,10 @@ table(pred_13, fold_test$DVT)
 plot(fold_pre13, panel = panel.lda, 
      abbrev = FALSE, xlab = "LD1", ylab = "LD2")
 
-write.csv(fold_pre13$scaling, file = "F:/004/Ö×ÁöÑªË¨Êı¾İ¿â¼°·ÖÎö½á¹û/2100Àı ·ÖÎö½á¹û - 3/LDA»Ø¹éÏµÊıÓĞDD.csv")
+write.csv(fold_pre13$scaling, file = "F:/004/è‚¿ç˜¤è¡€æ “æ•°æ®åº“åŠåˆ†æç»“æœ/2100ä¾‹ åˆ†æç»“æœ - 3/LDAå›å½’ç³»æ•°æœ‰DD.csv")
 
 
-# LR ÁªºÏD¶ş¾ÛÌå
+# LR è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num.2]],]   
 
 fold_train <- dataset[-folds[[num.2]],]
@@ -2621,14 +2603,14 @@ fold_predict14 <- predict(fold_pre14,type='response', newdata=fold_test)
 roc14 <- roc(as.numeric(fold_test[,59]),fold_predict14)
 plot(roc14, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_14 <- ifelse(fold_predict14 >= 0.191,2,1)
 table(pred_14, fold_test$DVT)
 (41+13)/73   ###  0.740  ###
 
-# CART ÁªºÏD¶ş¾ÛÌå
+# CART è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num.3]],]   
 
 fold_train <- dataset[-folds[[num.3]],]
@@ -2641,13 +2623,13 @@ fold_predict15 <- predict(fold_pre15,type='class', newdata=fold_test)
 roc15 <- roc(as.numeric(fold_test[,59]),as.numeric(fold_predict15))
 plot(roc15, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict15, fold_test$DVT)
 (51+8)/72   ###  0.808  ###
 
-# RF ÁªºÏD¶ş¾ÛÌå
+# RF è”åˆDäºŒèšä½“
 fold_test <- dataset[folds[[num.4]],]   
 
 fold_train <- dataset[-folds[[num.4]],]
@@ -2660,13 +2642,13 @@ fold_predict16 <- predict(fold_pre16,type='response', newdata=fold_test)
 roc16 <- roc(as.numeric(fold_test[,59]),as.numeric(fold_predict16))
 plot(roc16, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict16, fold_test$DVT)
 (49+8)/73   ###  0.781  ###
 
-# SVM ÁªºÏD¶ş¾ÛÌå
+# SVM è”åˆDäºŒèšä½“
 
 fold_test <- dataset[folds[[num.5]],]   
 
@@ -2680,122 +2662,122 @@ fold_predict17 <- predict(fold_pre17,type='response', newdata=fold_test)
 roc17 <- roc(as.numeric(fold_test[,59]),as.numeric(fold_predict17))
 plot(roc17, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict17, fold_test$DVT)
 (55+7)/73   ###  0.849  ###
 
 
-# ÔÚÑéÖ¤¼¯ÆÀ¼ÛÄ£ĞÍ
+# åœ¨éªŒè¯é›†è¯„ä»·æ¨¡å‹
 
-# LDA ÁªºÏD¶ş¾ÛÌå
+# LDA è”åˆDäºŒèšä½“
 
 fold_predict31 <- predict(fold_pre13, newdata=validation, type="response")
-fold_predict31 <- as.data.frame(fold_predict31)$posterior.ÓĞÉî¾²ÂöÑªË¨
+fold_predict31 <- as.data.frame(fold_predict31)$posterior.æœ‰æ·±é™è„‰è¡€æ “
 
 roc31 <- roc(as.numeric(validation[,60]),fold_predict31)
 plot(roc31, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_31 <- ifelse(fold_predict31 >= 0.367,2,1)
 table(pred_31, validation$DVT)
 (213+37)/310   ###  0.806  ###
 
-# LR ÁªºÏD¶ş¾ÛÌå
+# LR è”åˆDäºŒèšä½“
 
 fold_predict32 <- predict(fold_pre14,type='response', newdata=validation)  
 
 roc32 <- roc(as.numeric(validation[,60]),fold_predict32)
 plot(roc32, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_32 <- ifelse(fold_predict32 >= 0.366,2,1)
 table(pred_32, validation$DVT)
 (211+37)/310   ###  0.800  ###
 
-# CART ÁªºÏD¶ş¾ÛÌå
+# CART è”åˆDäºŒèšä½“
 
 fold_predict33 <- predict(fold_pre15,type='class', newdata=validation)  
 
 roc33 <- roc(as.numeric(validation[,60]),as.numeric(fold_predict33))
 plot(roc33, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict33, validation$DVT)
 (211+34)/310   ###  0.790 ###
 
-# RF ÁªºÏD¶ş¾ÛÌå
+# RF è”åˆDäºŒèšä½“
 
 fold_predict34 <- predict(fold_pre16,type='response', newdata=validation)  
 
 roc34 <- roc(as.numeric(validation[,60]),as.numeric(fold_predict34))
 plot(roc34, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict34, validation$DVT)
 (221+35)/310    ###  0.826  ###
 
-# SVM ÁªºÏD¶ş¾ÛÌå
+# SVM è”åˆDäºŒèšä½“
 
 fold_predict35 <- predict(fold_pre17,type='response', newdata=validation)  
 
 roc35 <- roc(as.numeric(validation[,60]),as.numeric(fold_predict35))
 plot(roc35, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict35, validation$DVT)
 (229+27)/310   ###  0.826  ###
 
 
-#########  »æÖÆĞ£×¼ÇúÏßµÄ³¢ÊÔ    ######
+#########  ç»˜åˆ¶æ ¡å‡†æ›²çº¿çš„å°è¯•    ######
 library(caret)
 library(rms)
 
 set.seed(7)
-ctrl <- trainControl(method = "none", classProbs = TRUE, # Êä³öÔ¤²â¸ÅÂÊ #
+ctrl <- trainControl(method = "none", classProbs = TRUE, # è¾“å‡ºé¢„æµ‹æ¦‚ç‡ #
                      summaryFunction = twoClassSummary)
 
-### ²»ÁªºÏD¶ş¾ÛÌå½¨Á¢²»Í¬Ëã·¨Ô¤²âÄ£ĞÍ
-#LDAÄ£ĞÍ
+### ä¸è”åˆDäºŒèšä½“å»ºç«‹ä¸åŒç®—æ³•é¢„æµ‹æ¨¡å‹
+#LDAæ¨¡å‹
 set.seed(7)
 lda_lift <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistory+log2WBC, data = dataset[-folds[[num1]],],
                   method = "lda", metric = "ROC",
                   trControl = ctrl)
-#LRÄ£ĞÍ 
+#LRæ¨¡å‹ 
 set.seed(7)
 lr_lift <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistory+log2WBC, data = dataset[-folds[[num2]],],
                  method = "glm", metric = "ROC",
                  trControl = ctrl)
-#CARTÄ£ĞÍ 
+#CARTæ¨¡å‹ 
 library(rpart)
 set.seed(7)
 cart_lift <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistory+log2WBC, data = dataset[-folds[[num3]],],
                    method = "rpart2", metric = "ROC",
                    trControl = ctrl)
-#RFÄ£ĞÍ 
+#RFæ¨¡å‹ 
 library(randomForest)
 set.seed(7)
 rf_lift <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistory+log2WBC, data = dataset[-folds[[num4]],],
                  method = "parRF", metric = "ROC",
                  trControl = ctrl)
-#SVMÄ£ĞÍ 
+#SVMæ¨¡å‹ 
 library(kernlab)
 set.seed(7)
 svm_lift <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHistory+log2WBC, data = dataset[-folds[[num5]],],
                   method = "svmRadial", metric = "ROC",
                   trControl = ctrl)
-#KhoranaÄ£ĞÍ
+#Khoranaæ¨¡å‹
 set.seed(7)
 khorana_lift <- train(DVT~K_Cancerlevel+K_WBC+K_PLT+K_HbEPO+K_BMI, data = dataset[-folds[[num6]],],
                       method = "glm", metric = "ROC",
@@ -2806,16 +2788,16 @@ library("foreign")
 validation.new <- read.spss("validation.sav")  
 validation.new <- as.data.frame(validation.new)
 
-## ÌáÈ¡ÑôĞÔ½á¾ÖµÄÔ¤²â¸ÅÂÊ
+## æå–é˜³æ€§ç»“å±€çš„é¢„æµ‹æ¦‚ç‡
 lift_results <- data.frame(DVT = validation$DVT)
-lift_results$LDA <- predict(lda_lift, validation, type = "prob")[,"ÓĞÉî¾²ÂöÑªË¨"]
-lift_results$LR <- predict(lr_lift, validation, type = "prob")[,"ÓĞÉî¾²ÂöÑªË¨"]
-lift_results$CT <- predict(cart_lift, validation, type = "prob")[,"ÓĞÉî¾²ÂöÑªË¨"]
-lift_results$RF <- predict(rf_lift, validation, type = "prob")[,"ÓĞÉî¾²ÂöÑªË¨"]
-lift_results$SVM <- predict(svm_lift, validation, type = "prob")[,"ÓĞÉî¾²ÂöÑªË¨"]
-lift_results$Khorana <- predict(khorana_lift, validation, type = "prob")[,"ÓĞÉî¾²ÂöÑªË¨"]
+lift_results$LDA <- predict(lda_lift, validation, type = "prob")[,"æœ‰æ·±é™è„‰è¡€æ “"]
+lift_results$LR <- predict(lr_lift, validation, type = "prob")[,"æœ‰æ·±é™è„‰è¡€æ “"]
+lift_results$CT <- predict(cart_lift, validation, type = "prob")[,"æœ‰æ·±é™è„‰è¡€æ “"]
+lift_results$RF <- predict(rf_lift, validation, type = "prob")[,"æœ‰æ·±é™è„‰è¡€æ “"]
+lift_results$SVM <- predict(svm_lift, validation, type = "prob")[,"æœ‰æ·±é™è„‰è¡€æ “"]
+lift_results$Khorana <- predict(khorana_lift, validation, type = "prob")[,"æœ‰æ·±é™è„‰è¡€æ “"]
 
-###  »æÖÆĞ£×¼ÇúÏß
+###  ç»˜åˆ¶æ ¡å‡†æ›²çº¿
 library(rms)
 trellis.par.set(caretTheme())
 cal_new1 <- calibration(DVT ~ LDA+LR+CT+RF+SVM,
@@ -2825,7 +2807,7 @@ plot(cal_new1, type = "l", auto.key = list(columns = 3,
                                            lines = TRUE,
                                            points = FALSE))
 
-### ÁªºÏD¶ş¾ÛÌå
+### è”åˆDäºŒèšä½“
 
 set.seed(7)
 lda_lift_DD <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+VTEHistory+log2WBC+log2DDimer, data = dataset[-folds[[num.1]],],
@@ -2852,18 +2834,18 @@ svm_lift_DD <- train(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Pl
                      method = "svmRadial", metric = "ROC",
                      trControl = ctrl)
 set.seed(7)
-khorana_lift_DD <- train(DVT~K_Cancerlevel+K_WBC+K_PLT+K_HbEPO+K_BMI+D¶ş¾ÛÌå, data = dataset[-folds[[num.6]],],
+khorana_lift_DD <- train(DVT~K_Cancerlevel+K_WBC+K_PLT+K_HbEPO+K_BMI+DäºŒèšä½“, data = dataset[-folds[[num.6]],],
                          method = "glm", metric = "ROC",
                          trControl = ctrl)
 
 
 lift_results <- data.frame(DVT = validation$DVT)
-lift_results$LDA_DD <- predict(lda_lift_DD, validation, type = "prob")[,"ÓĞÉî¾²ÂöÑªË¨"]
-lift_results$LR_DD <- predict(lr_lift_DD, validation, type = "prob")[,"ÓĞÉî¾²ÂöÑªË¨"]
-lift_results$CT_DD <- predict(cart_lift_DD, validation, type = "prob")[,"ÓĞÉî¾²ÂöÑªË¨"]
-lift_results$RF_DD <- predict(rf_lift_DD, validation, type = "prob")[,"ÓĞÉî¾²ÂöÑªË¨"]
-lift_results$SVM_DD <- predict(svm_lift_DD, validation, type = "prob")[,"ÓĞÉî¾²ÂöÑªË¨"]
-lift_results$Khorana_DD <- predict(khorana_lift_DD, validation, type = "prob")[,"ÓĞÉî¾²ÂöÑªË¨"]
+lift_results$LDA_DD <- predict(lda_lift_DD, validation, type = "prob")[,"æœ‰æ·±é™è„‰è¡€æ “"]
+lift_results$LR_DD <- predict(lr_lift_DD, validation, type = "prob")[,"æœ‰æ·±é™è„‰è¡€æ “"]
+lift_results$CT_DD <- predict(cart_lift_DD, validation, type = "prob")[,"æœ‰æ·±é™è„‰è¡€æ “"]
+lift_results$RF_DD <- predict(rf_lift_DD, validation, type = "prob")[,"æœ‰æ·±é™è„‰è¡€æ “"]
+lift_results$SVM_DD <- predict(svm_lift_DD, validation, type = "prob")[,"æœ‰æ·±é™è„‰è¡€æ “"]
+lift_results$Khorana_DD <- predict(khorana_lift_DD, validation, type = "prob")[,"æœ‰æ·±é™è„‰è¡€æ “"]
 
 library(rms)
 trellis.par.set(caretTheme())
@@ -2894,16 +2876,16 @@ d <- ggplot(longtest2, aes(d = D, m = M, color = name)) +
 
 ggarrange(m,n,c,d, labels=c("A","B","C","D"), ncol = 2, nrow = 2)
 
-########  »æÖÆÄ£ĞÍ½á¹ûÍ¼£¬»ùÓÚ¿ª·¢¼¯
+########  ç»˜åˆ¶æ¨¡å‹ç»“æœå›¾ï¼ŒåŸºäºå¼€å‘é›†
 
 library("foreign")    
 dataset2 <- read.spss("dataset1.sav")  
 dataset2 <- as.data.frame(dataset2)
 
 
-# ÑµÁ·¶ÔÓ¦µÄ×îÓÅÕÛ(numi)Ä£ĞÍ&ÔÚ²âÊÔ¼¯ÆÀ¼ÛÄ£ĞÍ
+# è®­ç»ƒå¯¹åº”çš„æœ€ä¼˜æŠ˜(numi)æ¨¡å‹&åœ¨æµ‹è¯•é›†è¯„ä»·æ¨¡å‹
 
-# LDA ²»ÁªºÏD¶ş¾ÛÌå
+# LDA ä¸è”åˆDäºŒèšä½“
 library(MASS)
 
 fold_test <- dataset2[folds[[num1]],]   
@@ -2919,7 +2901,7 @@ fold_predict7 <- as.data.frame(fold_predict7)$posterior.yes
 roc7 <- roc(as.numeric(fold_test$DVT),fold_predict7)
 plot(roc7, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_7 <- ifelse(fold_predict7 >= 0.291,2,1)
@@ -2929,9 +2911,9 @@ table(pred_7, fold_test$DVT)
 plot(fold_pre7, panel = panel.lda, 
      abbrev = FALSE, xlab = "LD1", ylab = "LD2")
 
-write.csv(fold_pre7$scaling ,file = "F:/004/Ö×ÁöÑªË¨Êı¾İ¿â¼°·ÖÎö½á¹û/2100Àı ·ÖÎö½á¹û - ÖÕ Ó¢ÎÄ±äÁ¿ºÍ¸³Öµ »æÖÆ½á¹ûÍ¼/LDA»Ø¹éÏµÊıÎŞDD.csv")
+write.csv(fold_pre7$scaling ,file = "F:/004/è‚¿ç˜¤è¡€æ “æ•°æ®åº“åŠåˆ†æç»“æœ/2100ä¾‹ åˆ†æç»“æœ - ç»ˆ è‹±æ–‡å˜é‡å’Œèµ‹å€¼ ç»˜åˆ¶ç»“æœå›¾/LDAå›å½’ç³»æ•°æ— DD.csv")
 
-# LR ²»ÁªºÏD¶ş¾ÛÌå
+# LR ä¸è”åˆDäºŒèšä½“
 fold_test <- dataset2[folds[[num2]],]   
 
 fold_train <- dataset2[-folds[[num2]],]
@@ -2944,7 +2926,7 @@ fold_predict8 <- predict(fold_pre8,type='response', newdata=fold_test)
 roc8 <- roc(as.numeric(fold_test$DVT),fold_predict8)
 plot(roc8, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_7 <- ifelse(fold_predict7 >= 0.288,2,1)
@@ -2963,7 +2945,7 @@ nomofit <- lrm(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+VTEHisto
 nomogram <- nomogram(nomofit, fun=plogis,fun.at=c(.001, .01, .05, seq(.1,.9, by=.1), .95, .99, .999),lp=F, funlabel="DVT pro")
 plot(nomogram)
 
-# CART ²»ÁªºÏD¶ş¾ÛÌå
+# CART ä¸è”åˆDäºŒèšä½“
 fold_test <- dataset2[folds[[num3]],]   
 
 fold_train <- dataset2[-folds[[num3]],]
@@ -2976,7 +2958,7 @@ fold_predict9 <- predict(fold_pre9,type='class', newdata=fold_test)
 roc9 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_predict9))
 plot(roc9, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict9, fold_test$DVT)
@@ -2985,7 +2967,7 @@ table(fold_predict9, fold_test$DVT)
 plot(fold_pre9, margin=0.05)
 text(fold_pre9,  cex=0.8, pretty = 1)
 
-# RF ²»ÁªºÏD¶ş¾ÛÌå
+# RF ä¸è”åˆDäºŒèšä½“
 
 fold_test <- dataset2[folds[[num4]],]   
 
@@ -2999,7 +2981,7 @@ fold_predict10 <- predict(fold_pre10,type='response', newdata=fold_test)
 roc10 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_predict10))
 plot(roc10, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict10, fold_test$DVT)
@@ -3008,9 +2990,9 @@ table(fold_predict10, fold_test$DVT)
 none_D_Dimer_RF <- fold_pre10
 plot(none_D_Dimer_RF)
 
-# ÑµÁ·¶ÔÓ¦µÄ×îÓÅÕÛ(numi)Ä£ĞÍ&ÔÚ²âÊÔ¼¯ÆÀ¼ÛÄ£ĞÍ
+# è®­ç»ƒå¯¹åº”çš„æœ€ä¼˜æŠ˜(numi)æ¨¡å‹&åœ¨æµ‹è¯•é›†è¯„ä»·æ¨¡å‹
 
-# LDA ÁªºÏD¶ş¾ÛÌå
+# LDA è”åˆDäºŒèšä½“
 fold_test <- dataset2[folds[[num.1]],]   
 
 fold_train <- dataset2[-folds[[num.1]],]
@@ -3024,7 +3006,7 @@ fold_predict13 <- as.data.frame(fold_predict13)$posterior.yes
 roc13 <- roc(as.numeric(fold_test$DVT),fold_predict13)
 plot(roc13, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 
 pred_13 <- ifelse(fold_predict13 >= 0.238,2,1)
@@ -3034,10 +3016,10 @@ table(pred_13, fold_test$DVT)
 plot(fold_pre13, panel = panel.lda, 
      abbrev = FALSE, xlab = "LD1", ylab = "LD2")
 
-write.csv(fold_pre13$scaling, file = "F:/004/Ö×ÁöÑªË¨Êı¾İ¿â¼°·ÖÎö½á¹û/2100Àı ·ÖÎö½á¹û - ÖÕ Ó¢ÎÄ±äÁ¿ºÍ¸³Öµ »æÖÆ½á¹ûÍ¼/LDA»Ø¹éÏµÊıÓĞDD.csv")
+write.csv(fold_pre13$scaling, file = "F:/004/è‚¿ç˜¤è¡€æ “æ•°æ®åº“åŠåˆ†æç»“æœ/2100ä¾‹ åˆ†æç»“æœ - ç»ˆ è‹±æ–‡å˜é‡å’Œèµ‹å€¼ ç»˜åˆ¶ç»“æœå›¾/LDAå›å½’ç³»æ•°æœ‰DD.csv")
 
 
-# LR ÁªºÏD¶ş¾ÛÌå
+# LR è”åˆDäºŒèšä½“
 fold_test <- dataset2[folds[[num.2]],]   
 
 fold_train <- dataset2[-folds[[num.2]],]
@@ -3050,7 +3032,7 @@ fold_predict14 <- predict(fold_pre14,type='response', newdata=fold_test)
 roc14 <- roc(as.numeric(fold_test$DVT),fold_predict14)
 plot(roc14, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 pred_14 <- ifelse(fold_predict14 >= 0.263,2,1)
@@ -3069,7 +3051,7 @@ nomofit <- lrm(DVT~Age+log2LOS+log2CCI+Chemotherapy+Port_cath+NSAID+Bed+Plaster+
 nomogram <- nomogram(nomofit, fun=plogis,fun.at=c(.001, .01, .05, seq(.1,.9, by=.1), .95, .99, .999),lp=F, funlabel="DVT pro")
 plot(nomogram)
 
-# CART ÁªºÏD¶ş¾ÛÌå
+# CART è”åˆDäºŒèšä½“
 fold_test <- dataset2[folds[[num.3]],]   
 
 fold_train <- dataset2[-folds[[num.3]],]
@@ -3083,7 +3065,7 @@ library(pROC)
 roc15 <- roc(as.numeric(fold_test$DVT),as.numeric(fold_predict15))
 plot(roc15, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict15, fold_test$DVT)
@@ -3092,7 +3074,7 @@ table(fold_predict15, fold_test$DVT)
 plot(fold_pre15, margin=0.05)
 text(fold_pre15,  cex=0.8, pretty = 1)
 
-# RF ÁªºÏD¶ş¾ÛÌå
+# RF è”åˆDäºŒèšä½“
 fold_test <- dataset2[folds[[num.4]],]   
 
 fold_train <- dataset2[-folds[[num.4]],]
@@ -3105,7 +3087,7 @@ fold_predict16 <- predict(fold_pre16,type='response', newdata=fold_test)
 roc16 <- roc(as.numeric(fold_test[,59]),as.numeric(fold_predict16))
 plot(roc16, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 
 table(fold_predict16, fold_test$DVT)
@@ -3114,9 +3096,9 @@ table(fold_predict16, fold_test$DVT)
 D_Dimer_RF <- fold_pre16
 plot(D_Dimer_RF)
 
-write.csv(validation ,file = "F:/004/Ö×ÁöÑªË¨Êı¾İ¿â¼°·ÖÎö½á¹û/2100Àı ·ÖÎö½á¹û - ÖÕ Ó¢ÎÄ±äÁ¿ºÍ¸³Öµ »æÖÆ½á¹ûÍ¼/validation.csv")
+write.csv(validation ,file = "F:/004/è‚¿ç˜¤è¡€æ “æ•°æ®åº“åŠåˆ†æç»“æœ/2100ä¾‹ åˆ†æç»“æœ - ç»ˆ è‹±æ–‡å˜é‡å’Œèµ‹å€¼ ç»˜åˆ¶ç»“æœå›¾/validation.csv")
 
-##################  ¼ÆËãBrier Score   ##################
+##################  è®¡ç®—Brier Score   ##################
 
 LDA_brier <- mean((lift_results$LDA-as.numeric(lift_results$DVT)+1)^2)
 LDA_brier  # 0.1521626
@@ -3145,65 +3127,65 @@ library(pROC)   #0.756
 roc.LDA <- roc(as.numeric(lift_results$DVT), lift_results$LDA)
 plot(roc.LDA, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA")
 library(pROC)    #0.752
 roc.LR <- roc(as.numeric(lift_results$DVT), lift_results$LR)
 plot(roc.LR, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR")
 library(pROC)     #0.626
 roc.CART <- roc(as.numeric(lift_results$DVT), lift_results$CART)
 plot(roc.CART, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of CART")
 library(pROC)    #0.733
 roc.RF <- roc(as.numeric(lift_results$DVT), lift_results$RF)
 plot(roc.RF, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of RF")
 library(pROC)    #0.631
 roc.SVM <- roc(as.numeric(lift_results$DVT), lift_results$SVM)
 plot(roc.SVM, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of SVM")
 
 library(pROC)  #0.773
 roc.LDA_DD <- roc(as.numeric(lift_results$DVT), lift_results$LDA_DD)
 plot(roc.LDA_DD, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LDA_DD")
 library(pROC)  #0.772
 roc.LR_DD <- roc(as.numeric(lift_results$DVT), lift_results$LR_DD)
 plot(roc.LR_DD , print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of LR_DD")
 library(pROC)  #0.690
 roc.CART_DD <- roc(as.numeric(lift_results$DVT), lift_results$CART_DD)
 plot(roc.CART_DD, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of CART_DD")
 library(pROC)  #0.733
 roc.RF_DD <- roc(as.numeric(lift_results$DVT), lift_results$RF_DD)
 plot(roc.RF, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of RF_DD")
 library(pROC)  #0.715
 roc.SVM_DD <- roc(as.numeric(lift_results$DVT), lift_results$SVM_DD)
 plot(roc.SVM_DD, print.auc = TRUE, auc.polygon = TRUE, legacy.axes = TRUE, 
      grid = c(0.1, 0.2), grid.col = c("green", "red"), max.auc.polygon = TRUE,  
-     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ÌØÒì¶È", ylab = "ÁéÃô¶È",
+     auc.polygon.col = "skyblue", print.thres = TRUE, xlab = "1-ç‰¹å¼‚åº¦", ylab = "çµæ•åº¦",
      main = "ROC of SVM_DD")
 
-######  Êä³öAUCÖµµÄPÖµ
+######  è¾“å‡ºAUCå€¼çš„På€¼
 library(pROC)
 levels(lift_results$DVT)<-c('0','1')
 roc.area(as.numeric(as.vector(lift_results$DVT)),roc.SVM_DD$predictor)
